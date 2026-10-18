@@ -1,0 +1,24 @@
+{
+  "name": "@coflow/web",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 127.0.0.1",
+    "build": "vite build"
+  },
+  "dependencies": {
+    "@ant-design/icons": "^6.1.0",
+    "@tanstack/react-query": "^5.90.0",
+    "antd": "^5.27.0",
+    "dompurify": "3.3.1",
+    "fflate": "0.8.3",
+    "mermaid": "file:../../vendor/mermaid-11.12.2.tgz",
+    "pdfjs-dist": "file:../../vendor/pdfjs-dist-6.4.299.tgz",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "react-markdown": "^10.1.0",
+    "react-router-dom": "^7.9.0",
+    "remark-gfm": "4.0.1",
+    "vite": "^7.1.0"
+  }
+}

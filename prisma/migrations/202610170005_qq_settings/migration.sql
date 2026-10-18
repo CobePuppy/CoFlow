@@ -1,0 +1,6 @@
+CREATE TABLE "QQIntegration" (
+"workspaceId" TEXT PRIMARY KEY REFERENCES "Workspace"("id") ON DELETE CASCADE,
+"tokenHash" TEXT, "tokenHint" TEXT, "enabled" BOOLEAN NOT NULL DEFAULT false,
+"pushEnabled" BOOLEAN NOT NULL DEFAULT true, "pushTimes" TEXT NOT NULL DEFAULT '09:00,18:00',
+"webUrl" TEXT NOT NULL, "version" INTEGER NOT NULL DEFAULT 1 CHECK("version">0),
+"updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP);

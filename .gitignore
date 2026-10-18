@@ -1,0 +1,24 @@
+node_modules/
+dist/
+.env
+storage/
+playwright-report/
+test-results/
+.local-pg/
+.local-pg.log
+.local-pg-error.log
+*.backup
+backups/
+storage-test/
+storage-restore/
+.design-references/
+storage-restore-*/
+
+# Local caches and generated delivery artifacts
+.pnpm-store/
+artifacts/
+TianYiAICup/
+.env.*
+!.env.example
+!.env.production.example
+*.log

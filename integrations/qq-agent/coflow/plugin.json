@@ -1,0 +1,49 @@
+{
+  "id": "coflow",
+  "name": "汇流工作助手",
+  "version": "1.1.0",
+  "apiVersion": 1,
+  "description": "查询个人待办，并定时私信提醒未完成工作。",
+  "enabledByDefault": false,
+  "capabilities": ["message.command", "schedule.tick"],
+  "permissions": ["web_fetch"],
+  "settings": {
+    "apiBase": "http://127.0.0.1:18080/api/v1/integrations/qq",
+    "accessToken": "",
+    "pushEnabled": true,
+    "pushTimes": "09:00,18:00",
+    "workspaceId": "",
+    "syncPolicy": true
+  },
+  "configSchema": {
+    "apiBase": {
+      "type": "string",
+      "label": "汇流机器人接口",
+      "description": "同机部署使用 http://127.0.0.1:端口/api/v1/integrations/qq；跨机器必须 HTTPS。"
+    },
+    "accessToken": {
+      "type": "string",
+      "label": "机器人专用令牌",
+      "secret": true
+    },
+    "pushEnabled": {
+      "type": "boolean",
+      "label": "启用私信待办提醒"
+    },
+    "pushTimes": {
+      "type": "string",
+      "label": "北京时间提醒时刻",
+      "description": "例如 09:00,18:00。每个时刻每人一条汇总，停机不补发。"
+    },
+    "workspaceId": {
+      "type": "string",
+      "label": "CoFlow团队ID",
+      "description": "复制个人设置中QQ集成的团队ID；兼容旧环境变量配置时可留空。"
+    },
+    "syncPolicy": {
+      "type": "boolean",
+      "label": "从CoFlow同步提醒策略",
+      "description": "同步团队提醒时刻与开关，缓存最多30秒；本地提醒开关仍须开启。"
+    }
+  }
+}

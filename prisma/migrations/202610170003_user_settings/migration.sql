@@ -1,0 +1,6 @@
+CREATE TABLE "UserSettings" (
+"userId" TEXT PRIMARY KEY REFERENCES "User"("id") ON DELETE CASCADE,
+"encryptedKey" TEXT, "keyHint" TEXT, "model" TEXT NOT NULL DEFAULT 'deepseek-flash',
+"slides" INTEGER NOT NULL DEFAULT 12, "minutes" INTEGER NOT NULL DEFAULT 8,
+"preferredEdition" TEXT NOT NULL DEFAULT 'student', "version" INTEGER NOT NULL DEFAULT 1,
+"updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP);

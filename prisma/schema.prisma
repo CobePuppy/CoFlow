@@ -1,0 +1,229 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+model ProjectFork {
+  id String @id @default(uuid())
+  workspaceId String
+  projectId String
+  title String
+  goal String
+  criterion String
+  version Int @default(1)
+  data Json
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([projectId])
+}
+datasource db {
+  provider = "postgresql"
+  url = env("DATABASE_URL")
+}
+model User {
+  id String @id @default(uuid())
+  email String @unique
+  name String
+  password String
+}
+model QQBinding {
+  workspaceId String
+  userId String
+  qq String
+  createdAt DateTime @default(now())
+  @@id([workspaceId,userId])
+  @@unique([workspaceId,qq])
+}
+model QQBindingCode {
+  hash String @id
+  workspaceId String
+  userId String
+  expiresAt DateTime
+  @@unique([workspaceId,userId])
+}
+model Session {
+  hash String @id
+  userId String
+  csrf String
+  expiresAt DateTime
+}
+model Workspace {
+  id String @id @default(uuid())
+  name String
+}
+model TeamCode {
+  workspaceId String @id
+  code String @unique
+}
+model WorkspaceMember {
+  workspaceId String
+  userId String
+  role String @default("MEMBER")
+  displayName String?
+  @@id([workspaceId,userId])
+}
+model Invitation {
+  id String @id @default(uuid())
+  workspaceId String
+  email String
+  hash String @unique
+  expiresAt DateTime
+  acceptedAt DateTime?
+}
+model Project {
+  id String @id @default(uuid())
+  workspaceId String
+  name String
+  description String @default("")
+  archivedAt DateTime?
+  sequence Int @default(0)
+  workflow String @default("STANDARD")
+  @@index([workspaceId])
+}
+model ProjectMember {
+  projectId String
+  userId String
+  roles String[]
+  @@id([projectId,userId])
+}
+// Append-only revision arrays are held inside the versioned task aggregate.
+// Every mutation uses a conditional version update inside a database transaction.
+model Task {
+  id String @id @default(uuid())
+  workspaceId String
+  projectId String
+  number Int
+  status String @default("DRAFT")
+  version Int @default(1)
+  deletedAt DateTime?
+  deletedBy String?
+  data Json
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@unique([projectId,number])
+  @@index([projectId,status])
+  @@index([projectId,deletedAt])
+  @@index([workspaceId,updatedAt])
+}
+model Document {
+  id String @id @default(uuid())
+  workspaceId String
+  projectId String
+  title String
+  content String
+  taskIds String[]
+  version Int @default(1)
+  revisions Json
+  updatedAt DateTime @updatedAt
+  @@index([projectId])
+}
+model Attachment {
+  id String @id @default(uuid())
+  workspaceId String
+  projectId String
+  taskId String?
+  key String @unique
+  name String
+  mime String
+  size Int
+  userId String
+  createdAt DateTime @default(now())
+  stage String @default("GENERAL")
+  stageVersion Int?
+  deletedAt DateTime?
+  deletedBy String?
+}
+model Notification {
+  id String @id @default(uuid())
+  recipientId String
+  workspaceId String
+  projectId String
+  taskId String
+  message String
+  dedupe String @unique
+  readAt DateTime?
+  createdAt DateTime @default(now())
+  @@index([recipientId,readAt,createdAt])
+}
+model AuditEvent {
+  id String @id @default(uuid())
+  workspaceId String
+  resourceId String
+  actorId String
+  action String
+  createdAt DateTime @default(now())
+}
+model IdempotencyRecord {
+  id String @id @default(uuid())
+  userId String
+  key String
+  digest String
+  result Json
+  expiresAt DateTime
+  @@unique([userId,key])
+}
+
+model RequirementTemplate {
+  id String @id @default(uuid())
+  workspaceId String
+  projectId String
+  name String
+  content Json
+  active Boolean @default(true)
+  version Int @default(1)
+  createdBy String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@unique([projectId,name])
+  @@index([projectId,active])
+}
+
+model Competition {
+  id String @id @default(uuid())
+  workspaceId String
+  projectId String
+  name String
+  organizer String @default("")
+  url String @default("")
+  deadline String @default("")
+  stage String @default("PREPARING")
+  outcome String @default("")
+  notes String @default("")
+  version Int @default(1)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([projectId,stage])
+}
+
+model UserSettings {
+ userId String @id
+ encryptedKey String?
+ keyHint String?
+ model String @default("deepseek-flash")
+ slides Int @default(12)
+ minutes Int @default(8)
+ preferredEdition String @default("student")
+ version Int @default(1)
+ updatedAt DateTime @updatedAt
+}
+
+model ProofBoard {
+ competitionId String @id
+ workspaceId String
+ projectId String
+ version Int @default(1)
+ data Json
+ updatedAt DateTime @updatedAt
+ @@index([projectId])
+}
+
+model QQIntegration {
+ workspaceId String @id
+ tokenHash String?
+ tokenHint String?
+ enabled Boolean @default(false)
+ pushEnabled Boolean @default(true)
+ pushTimes String @default("09:00,18:00")
+ webUrl String
+ version Int @default(1)
+ updatedAt DateTime @updatedAt
+}

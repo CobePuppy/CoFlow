@@ -1,0 +1,51 @@
+{
+  "name": "coflow",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "concurrently -k \"pnpm --filter @coflow/api dev\" \"pnpm --filter @coflow/web dev\"",
+    "build": "pnpm -r build",
+    "typecheck": "tsc --noEmit",
+    "lint": "prettier --check apps/api/src apps/web/src packages/contracts prisma/seed.ts tests scripts .prettierrc.json package.json tsconfig.json playwright.config.ts",
+    "format": "prettier --write apps/api/src apps/web/src packages/contracts prisma/seed.ts tests scripts .prettierrc.json package.json tsconfig.json playwright.config.ts",
+    "test": "tsx --test tests/*.test.ts",
+    "test:integration": "tsx --test tests/integration/*.test.ts",
+    "test:prepare": "tsx scripts/prepare-test.ts",
+    "test:e2e": "playwright test",
+    "db:generate": "prisma generate",
+    "db:migrate": "prisma migrate deploy",
+    "db:seed": "tsx prisma/seed.ts",
+    "storage:cleanup": "tsx scripts/storage-cleanup.ts",
+    "backup": "tsx scripts/backup.ts",
+    "backup:verify": "tsx scripts/backup.ts --restore",
+    "db:local:status": "tsx scripts/local-db.ts",
+    "db:local:start": "tsx scripts/local-db.ts --start"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.56.0",
+    "@types/express": "^5.0.0",
+    "@types/express-session": "^1.18.0",
+    "@types/multer": "^2.0.0",
+    "@types/node": "^24.0.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "concurrently": "^9.2.0",
+    "prettier": "3.6.2",
+    "prisma": "6.19.0",
+    "tsx": "^4.20.0",
+    "typescript": "^5.9.0"
+  },
+  "dependencies": {
+    "@nestjs/common": "^11.1.0",
+    "@nestjs/core": "^11.1.0",
+    "@nestjs/platform-express": "^11.1.0",
+    "@prisma/client": "6.19.0",
+    "argon2": "^0.44.0",
+    "dotenv": "^17.2.0",
+    "express": "^5.1.0",
+    "multer": "^2.0.0",
+    "reflect-metadata": "^0.2.2",
+    "rxjs": "^7.8.0",
+    "zod": "^4.1.0"
+  }
+}
