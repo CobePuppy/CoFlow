@@ -1,7 +1,7 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
-import { Markdown } from '../../apps/web/src/components/Markdown.js';
-import '../../apps/web/src/style.css';
+import { Markdown } from '../../packages/web-core/src/shared/ui/Markdown.js';
+import '../../packages/web-core/src/shared/styles/global.css';
 
 const content = `# 需求资料
 

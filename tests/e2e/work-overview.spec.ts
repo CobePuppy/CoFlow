@@ -35,9 +35,12 @@ test('工作概览分类、研发资料与手机布局', async ({ page }) => {
   await page.locator('.work-stat').filter({ hasText: '待我处理总数' }).click();
   if (await page.locator('.work-task-card').count()) {
     await page.locator('.work-task-card').first().click();
-    await page.getByRole('tab', { name: '开发资料', exact: true }).click();
-    await expect(page.locator('.delivery-materials')).toContainText('技术方案');
-    await expect(page.locator('.delivery-materials')).toContainText(
+    await page.getByRole('tab', { name: '方案与评审', exact: true }).click();
+    await expect(page.locator('.delivery-materials:visible')).toContainText(
+      '技术方案',
+    );
+    await page.getByRole('tab', { name: '开发交付', exact: true }).click();
+    await expect(page.locator('.delivery-materials:visible')).toContainText(
       '开发交付与自测',
     );
     await page.screenshot({

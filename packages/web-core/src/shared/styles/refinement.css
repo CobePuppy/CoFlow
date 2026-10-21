@@ -1,0 +1,634 @@
+/* Visual references: Linear's calmer interface and shadcn/ui sidebar blocks.
+   Shared by both applications; layout breakpoints stay with their feature. */
+:root[data-edition] {
+  --canvas: #f7f8fa;
+  --surface-subtle: #f3f4f6;
+  --text: #202633;
+  --muted: #626d80;
+  --line: #e5e7ec;
+  --radius: 12px;
+}
+:root[data-edition='student'] {
+  --canvas: #f6f9f8;
+  --surface-subtle: #eff5f2;
+}
+[data-edition] body {
+  font-size: 14px;
+}
+[data-edition] h1 {
+  font-size: 28px;
+  letter-spacing: -0.8px;
+}
+[data-edition] h2 {
+  font-size: 21px;
+  letter-spacing: -0.4px;
+}
+[data-edition] .portal {
+  background: var(--canvas);
+  color: var(--text);
+}
+[data-edition] .portal .portal-sidebar,
+[data-edition] .shell > aside {
+  background: #fbfcfd;
+  border-right-color: var(--line);
+}
+[data-edition] .portal .portal-sidebar {
+  padding: 24px 14px 16px;
+}
+[data-edition] .portal-brand .brand-image {
+  width: 162px;
+}
+[data-edition] .portal-brand > span {
+  font-size: 11px;
+  letter-spacing: 1px;
+}
+[data-edition] .portal-sidebar nav {
+  gap: 4px;
+}
+[data-edition] .portal-sidebar nav button {
+  min-height: 44px;
+  padding: 11px 14px;
+  gap: 12px;
+  font-size: 14px;
+  color: #566175;
+}
+[data-edition] .portal-sidebar nav button .anticon {
+  font-size: 18px;
+}
+[data-edition] .portal-sidebar nav button.selected,
+[data-edition] .shell .nav-item.active {
+  background: var(--accent-soft);
+  color: var(--primary);
+  box-shadow: none;
+}
+[data-edition] .portal-sidebar nav button.selected::before {
+  transform: scaleY(0.65);
+}
+[data-edition] .portal-favorites {
+  margin: 26px 12px;
+  font-size: 12px;
+  color: var(--muted);
+}
+[data-edition] .portal-profile {
+  font-size: 13px;
+  border-color: var(--line);
+}
+[data-edition] .portal .portal-header {
+  height: 88px;
+}
+[data-edition] .portal-header h1 {
+  font-size: 25px;
+  color: var(--text);
+}
+[data-edition] .portal-header .ant-input-affix-wrapper {
+  background: white;
+  border-color: var(--line);
+}
+[data-edition] .portal-welcome {
+  padding: 30px;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  box-shadow: 0 4px 24px #20263304;
+}
+[data-edition] .portal-welcome::before {
+  border-radius: 32px;
+  transform: rotate(-24deg);
+  background: var(--accent-faint);
+  border-color: var(--accent-line);
+  right: -32px;
+  top: -100px;
+}
+[data-edition] .portal-welcome::after {
+  border-radius: 24px;
+  transform: rotate(-24deg);
+  background: transparent;
+  border-color: var(--accent-line);
+}
+[data-edition] .portal-welcome h2 {
+  font-size: clamp(23px, 2.3vw, 32px);
+  line-height: 1.5;
+  margin: 10px 0;
+}
+[data-edition] .portal-welcome > span {
+  font-size: 12px;
+  letter-spacing: 1px;
+}
+[data-edition] .portal-welcome > div > span {
+  background: var(--canvas);
+  border: 0;
+  border-radius: 8px;
+  padding: 10px 16px;
+  font-size: 13px;
+}
+[data-edition] .portal-welcome b {
+  font-size: 22px;
+  margin-right: 4px;
+}
+[data-edition] .portal-apps {
+  margin-top: 24px;
+  border-color: var(--line);
+  box-shadow: 0 3px 16px #20263303;
+}
+[data-edition] .portal-app-group h3 {
+  border-left: 0;
+  padding: 10px 12px;
+  font-size: 12px;
+  letter-spacing: 0.5px;
+}
+[data-edition] .portal-app-row {
+  min-height: 96px;
+}
+[data-edition] .portal-app-link {
+  gap: 14px;
+}
+[data-edition] .portal-app-icon {
+  border-radius: 12px;
+  box-shadow: none;
+}
+[data-edition] .portal-project-grid article {
+  border-color: var(--line);
+  box-shadow: 0 3px 16px #20263304;
+}
+[data-edition] .team-switcher {
+  background: white;
+  border-radius: 10px;
+}
+[data-edition] .work-stat {
+  position: relative;
+  border-radius: 12px;
+  padding: 20px 22px;
+  box-shadow: 0 2px 8px #20263303;
+  transition:
+    border-color 160ms ease,
+    background-color 160ms ease;
+}
+[data-edition] .work-stat strong {
+  font-size: 32px;
+  font-weight: 650;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -1px;
+}
+[data-edition] .work-stat span {
+  font-size: 13px;
+}
+[data-edition] .work-stat.selected {
+  background: var(--accent-faint);
+  border-color: var(--accent-line);
+  box-shadow: inset 0 3px var(--primary);
+}
+[data-edition] .work-task-card,
+[data-edition] .work-risk {
+  border-radius: 10px;
+  box-shadow: none;
+}
+[data-edition] .dashboard-row:last-child {
+  border-bottom: 0;
+}
+[data-edition] .dashboard-row strong {
+  font-weight: 550;
+  font-size: 14px;
+}
+[data-edition] .work-dashboard .ant-card-head,
+[data-edition] .work-focus-grid .ant-card-head {
+  min-height: 56px;
+}
+[data-edition] .shell.project-space {
+  --primary: #1469d8;
+  --accent-soft: #edf3fc;
+  --accent-faint: #f7faff;
+  --canvas: #f7f8fa;
+  background: var(--canvas);
+}
+[data-edition='student'] .shell.project-space {
+  --primary: #087f79;
+  --accent-soft: #eaf5f1;
+  --accent-faint: #f5faf8;
+  --canvas: #f6f9f8;
+}
+[data-edition] .shell.project-space > aside {
+  background: #fbfcfd;
+  border-color: var(--line);
+}
+[data-edition] .shell.project-space > aside .nav-item {
+  color: var(--muted);
+  font-size: 13px;
+  border-radius: 8px;
+}
+[data-edition] .shell.project-space > aside .nav-item:hover {
+  background: var(--surface-subtle);
+}
+[data-edition] .shell.project-space > aside .nav-item.active {
+  background: var(--accent-soft);
+  color: var(--primary);
+  box-shadow: none;
+}
+[data-edition] .project-selector .ant-select-selector {
+  background: white !important;
+  border-color: var(--line) !important;
+}
+[data-edition] .project-global-links {
+  border-color: var(--line);
+}
+[data-edition] .project-brand > span,
+[data-edition] .project-selector > span {
+  color: var(--muted);
+}
+[data-edition] .login {
+  background: var(--canvas);
+}
+[data-edition] .login-card {
+  border: 1px solid var(--line);
+  box-shadow: 0 16px 64px #2026330a;
+  border-radius: 20px;
+}
+@media (min-width: 761px) {
+  [data-edition] .portal-main {
+    padding: 0 36px 32px;
+  }
+}
+@media (max-width: 760px) {
+  [data-edition] .portal .portal-header {
+    height: auto;
+    min-height: 76px;
+  }
+  [data-edition] .portal-header h1 {
+    font-size: 22px;
+  }
+  [data-edition] .portal-welcome {
+    padding: 22px 18px;
+    margin-top: 18px;
+  }
+  [data-edition] .portal-welcome > div > span {
+    padding: 9px 10px;
+  }
+  [data-edition] .portal-welcome b {
+    font-size: 20px;
+  }
+  [data-edition] .portal-apps {
+    padding: 18px 14px;
+  }
+  [data-edition] .work-stat {
+    padding: 16px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-edition] .work-stat {
+    transition: none;
+  }
+}
+[data-edition] .project-space .ant-btn-primary {
+  background: var(--primary);
+  border-color: var(--primary);
+}
+[data-edition] .project-space .ant-btn-primary:not(:disabled):hover {
+  background: color-mix(in srgb, var(--primary) 85%, black) !important;
+  border-color: color-mix(in srgb, var(--primary) 85%, black) !important;
+}
+[data-edition] .project-space > main > header,
+[data-edition] .project-metrics,
+[data-edition] .project-space > aside .account-menu-root {
+  border-color: var(--line);
+}
+[data-edition] .project-space > aside .account-menu-root strong,
+[data-edition] .project-space > aside .account-menu-root .muted,
+[data-edition] .project-space > aside .mobile-nav-close,
+[data-edition] .project-description,
+[data-edition] .project-eyebrow {
+  color: var(--muted);
+}
+
+/* Project directory retains its familiar cards, in two columns. */
+[data-edition] .portal-projects .portal-project-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+@media (max-width: 760px) {
+  [data-edition] .portal-projects .portal-project-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+/* Project workbench: compact rhythm and crisp controls. */
+[data-edition] .shell.project-space {
+  font-family:
+    system-ui, 'Segoe UI', 'Microsoft YaHei UI', 'Microsoft YaHei', sans-serif;
+  color: var(--text);
+}
+[data-edition] .project-space > main > header {
+  height: 48px;
+  padding-inline: 24px;
+}
+[data-edition] .project-space .content {
+  padding: 20px 24px;
+}
+[data-edition] .project-space .project-heading {
+  gap: 12px;
+  margin-bottom: 16px;
+}
+[data-edition] .project-space .project-heading h1 {
+  font-size: 23px;
+  font-weight: 650;
+  line-height: 1.4;
+}
+[data-edition] .project-space .project-eyebrow {
+  margin-bottom: 4px !important;
+}
+[data-edition] .project-space .project-description {
+  margin-top: 6px;
+  max-width: 640px;
+}
+[data-edition] .project-space .project-brand {
+  margin-bottom: 10px;
+  padding-block: 4px;
+}
+[data-edition] .project-space .project-brand img {
+  height: 42px;
+}
+[data-edition] .project-space .project-selector {
+  margin-bottom: 14px;
+}
+[data-edition] .project-space .project-selector .ant-select-single {
+  min-height: 56px;
+}
+[data-edition] .project-space .project-choice-copy strong {
+  color: var(--text);
+  font-size: 13px;
+}
+[data-edition] .project-space .project-choice-copy small {
+  color: var(--muted);
+}
+[data-edition] .project-space .project-choice-icon {
+  background: var(--accent-soft);
+  color: var(--primary);
+}
+[data-edition] .project-space .project-selector .ant-select-arrow {
+  color: var(--muted);
+}
+[data-edition] .project-space .project-metrics {
+  margin-bottom: 16px;
+  padding: 10px 4px;
+  border-radius: 10px;
+}
+[data-edition] .project-space .project-metrics button {
+  color: var(--muted);
+  gap: 12px;
+  border-color: var(--line);
+}
+[data-edition] .project-space .project-metrics strong {
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+  font-size: 21px;
+}
+[data-edition] .project-space .ant-btn {
+  font-family:
+    system-ui, 'Segoe UI', 'Microsoft YaHei UI', 'Microsoft YaHei', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  text-shadow: none;
+  box-shadow: none;
+  transition:
+    color 140ms ease,
+    background-color 140ms ease,
+    border-color 140ms ease;
+}
+[data-edition] .project-space .ant-btn-default,
+[data-edition] .project-space .ant-btn-text:not(:disabled) {
+  color: #303b4d;
+}
+[data-edition] .project-space .ant-btn-primary {
+  color: white;
+}
+[data-edition] .project-space .ant-btn:disabled {
+  color: #8993a1;
+}
+[data-edition] .project-space .ant-btn-primary:disabled {
+  background: #eef0f3;
+  border-color: #e0e4eb;
+}
+[data-edition] .project-space .ant-btn-primary:not(:disabled):hover {
+  box-shadow: none;
+}
+[data-edition] .project-space .task-panel {
+  border-color: var(--line);
+  box-shadow: none;
+  border-radius: 10px;
+}
+[data-edition] .project-space .project-workbench-title {
+  padding: 16px 18px 0;
+  font-size: 18px;
+}
+[data-edition] .project-space .task-panel-controls {
+  padding: 10px 18px 0;
+}
+[data-edition] .project-space .toolbar {
+  gap: 8px;
+}
+[data-edition] .project-space .ant-table-cell {
+  padding: 12px !important;
+}
+[data-edition] .project-space .task-sub {
+  line-height: 1.5;
+  color: var(--muted);
+}
+[data-edition] .project-space .requirement-results {
+  padding: 9px 18px;
+  border-color: var(--line);
+  color: var(--muted);
+}
+[data-edition] .project-space .requirement-results > [role='status'] {
+  color: var(--text);
+}
+[data-edition] .project-space .project-row-selected > td {
+  background: var(--accent-faint) !important;
+}
+[data-edition] .project-space .project-row-selected > td:first-child {
+  box-shadow: inset 3px 0 var(--primary);
+}
+[data-edition] .project-space .requirement-title-link:hover {
+  color: var(--primary);
+}
+[data-edition] .project-space .requirement-preview {
+  border-color: var(--line);
+  border-radius: 10px;
+}
+[data-edition] .project-space .preview-heading {
+  color: var(--text);
+  border-color: var(--line);
+}
+[data-edition] .project-space .preview-navigation {
+  padding: 10px 14px;
+  border-color: var(--line);
+}
+[data-edition] .project-space .preview-body {
+  padding: 16px;
+}
+[data-edition] .project-space .preview-next {
+  margin: 16px 0;
+  background: var(--accent-faint);
+  border-color: var(--accent-line);
+}
+[data-edition] .project-space .preview-next strong {
+  color: var(--primary);
+}
+[data-edition] .project-space .preview-next p {
+  color: var(--muted);
+  font-size: 13px;
+}
+[data-edition] .project-space .project-overview {
+  padding: 20px;
+  border-color: var(--line);
+  border-radius: 10px;
+}
+[data-edition] .project-space .project-overview-grid {
+  gap: 14px;
+  margin-top: 16px;
+}
+[data-edition] .project-space .overview-block {
+  padding: 16px;
+  border-color: var(--line);
+}
+[data-edition] .project-space .overview-block h3 {
+  margin-bottom: 12px;
+}
+[data-edition] .project-space .overview-quality strong {
+  color: var(--primary);
+}
+[data-edition] .project-space .project-overview-actions {
+  margin: 16px 0 0;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+[data-edition] .project-space .content {
+  animation: project-workbench-enter 160ms ease-out;
+}
+[data-edition] .project-space .ant-card:hover {
+  transform: none;
+  box-shadow: none;
+}
+[data-edition] .project-space .nav-item {
+  transition:
+    color 140ms ease,
+    background-color 140ms ease;
+}
+@keyframes project-workbench-enter {
+  from {
+    opacity: 0.65;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@media (max-width: 650px) {
+  [data-edition] .project-space > main > header {
+    padding-inline: 14px;
+  }
+  [data-edition] .project-space .content {
+    padding: 16px 14px;
+  }
+  [data-edition] .project-space .project-heading h1 {
+    font-size: 21px;
+  }
+  [data-edition] .project-space .project-metrics {
+    padding: 12px;
+  }
+  [data-edition] .project-space .ant-btn {
+    min-height: 40px;
+  }
+  [data-edition] .project-space .project-overview {
+    padding: 16px;
+  }
+  [data-edition] .project-space .preview-navigation {
+    padding-inline: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-edition] .project-space .content,
+  [data-edition] .project-space .ant-btn,
+  [data-edition] .project-space .nav-item {
+    animation: none;
+    transition: none;
+  }
+}
+/* Navigation hierarchy: daily work first; resources and administration on demand. */
+[data-edition] .project-space .project-nav-label {
+  margin: 16px 12px 8px;
+  color: #738093;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.8px;
+  line-height: 1.5;
+}
+[data-edition] .project-space .project-nav-group {
+  margin-top: 6px;
+}
+[data-edition] .project-space .project-nav-group > summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  list-style: none;
+  padding: 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  color: #536074;
+  font-size: 13px;
+  font-weight: 500;
+}
+.project-nav-group > summary::-webkit-details-marker {
+  display: none;
+}
+[data-edition] .project-space .project-nav-group > summary:hover {
+  background: var(--surface-subtle);
+}
+.project-nav-group > summary:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+.project-group-indicator {
+  font-size: 16px;
+  transform: rotate(-90deg);
+}
+.project-nav-group[open] > summary .project-group-indicator {
+  transform: none;
+}
+[data-edition] .project-space .project-nav-group-content {
+  margin: 2px 0 8px 12px;
+  padding-left: 8px;
+  border-left: 1px solid var(--line);
+}
+[data-edition] .project-space .project-nav-group-content .nav-item {
+  font-size: 13px;
+}
+[data-edition] .project-space .project-nav-footer {
+  padding-top: 8px;
+  margin-top: 16px;
+}
+[data-edition] .project-space .project-global-links {
+  margin-top: 0;
+  padding-top: 0;
+}
+[data-edition] .project-space .project-global-links .nav-item small {
+  background: var(--accent-soft);
+  color: var(--primary);
+}
+[data-edition] .project-space .project-nav-footer > .account-menu-root {
+  margin-top: 12px;
+}
+[data-edition] .project-space .project-nav-group-content .team-switcher {
+  margin-bottom: 0;
+  padding: 8px;
+}
+[data-edition] .shell.project-space > aside {
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+[data-edition] .project-space .project-navigation,
+[data-edition] .project-space .project-nav-footer {
+  flex-shrink: 0;
+}
+[data-edition] .project-space details.project-nav-group {
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}

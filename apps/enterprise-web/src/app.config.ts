@@ -1,0 +1,42 @@
+export const appDefinition = {
+  workspaceLabel: '团队协作空间',
+  defaultWorkflow: 'STANDARD' as const,
+  introduction: '从需求、方案到交付，让产品、研发与测试在同一节奏上前行。',
+  flow: '需求 → 方案 → 双人评估 → 开发 → 测试 → 验收',
+  capabilities: { competitions: false, writing: false },
+  categories: ['协作', '管理'],
+  apps: [
+    {
+      id: 'work',
+      name: '需求协作',
+      category: '协作',
+      description: '集中管理需求，协作推进开发、测试与交付。',
+      icon: 'work',
+      color: 'blue',
+    },
+    {
+      id: 'library',
+      name: '知识库',
+      category: '协作',
+      description: '个人文件、团队共享资料与项目知识，按空间清晰管理',
+      icon: 'library',
+      color: 'teal',
+    },
+    {
+      id: 'projects',
+      name: '项目管理',
+      category: '管理',
+      description: '创建团队项目，明确目标、成员与交付进度。',
+      icon: 'projects',
+      color: 'orange',
+    },
+    {
+      id: 'members',
+      name: '团队',
+      category: '管理',
+      description: '邀请伙伴加入团队，管理成员身份与项目角色。',
+      icon: 'members',
+      color: 'purple',
+    },
+  ],
+};

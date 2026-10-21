@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+test.use({ actionTimeout: 15000 });
 test('下一步缺项提示、正文优先及确认后阶段推进', async ({ page }) => {
   const origin = 'http://localhost:5174',
     pid = '10000000-0000-4000-8000-000000000001';
@@ -35,22 +36,20 @@ test('下一步缺项提示、正文优先及确认后阶段推进', async ({ pa
   const task = await created.json();
   await page.goto('/student/?app=work&task=' + task.id);
   await expect(
-    page.getByRole('tab', { name: '需求正文', exact: true }),
+    page.getByRole('tab', { name: '需求说明', exact: true }),
   ).toHaveAttribute('aria-selected', 'true');
   const next = page.locator('.next-step-card');
   await expect(next).toContainText(/提交前.*补齐/);
   await expect(next).toContainText('验收标准');
-  await next.getByRole('button', { name: '提交需求', exact: true }).click();
+  await expect(
+    next.getByRole('button', { name: '提交需求', exact: true }),
+  ).toBeDisabled();
   const confirmation = page.getByRole('dialog', {
     name: '提交需求',
     exact: true,
   });
-  await expect(confirmation).toContainText('请先补齐提交资料');
-  await expect(
-    confirmation.getByRole('button', { name: '确认提交需求', exact: true }),
-  ).toBeDisabled();
-  await confirmation
-    .getByRole('button', { name: '编辑并补全需求', exact: true })
+  await next
+    .getByRole('button', { name: '补全需求和分工', exact: true })
     .click();
   await expect(
     page.getByRole('heading', { name: '编辑需求草稿', exact: true }),
@@ -71,15 +70,18 @@ test('下一步缺项提示、正文优先及确认后阶段推进', async ({ pa
     },
   });
   expect(update.ok()).toBeTruthy();
+  page.once('dialog', (dialog) => dialog.accept());
   await page.reload();
-  await expect(next).toContainText('提交资料已齐备');
-  await page.getByRole('tab', { name: '验收项', exact: true }).click();
+  await expect(
+    next.getByRole('button', { name: '提交需求', exact: true }),
+  ).toBeEnabled();
+  await page.getByRole('tab', { name: '测试与验收', exact: true }).click();
   await expect(
     page
-      .getByRole('tabpanel', { name: '验收项', exact: true })
+      .getByRole('tabpanel', { name: '测试与验收', exact: true })
       .getByText('缺项时说明待补资料', { exact: true }),
   ).toBeVisible();
-  await page.getByRole('tab', { name: '需求正文', exact: true }).click();
+  await page.getByRole('tab', { name: '需求说明', exact: true }).click();
   await expect(
     page
       .locator('.requirement-content')

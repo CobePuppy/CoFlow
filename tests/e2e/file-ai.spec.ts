@@ -138,7 +138,6 @@ test('TXT/DOCX/PDF解析、需求填入及AI配置复用与评审展示（模型
   ).json();
   const task = list.items[0];
   await page.goto('/student/?app=work&task=' + task.id);
-  await page.getByRole('button', { name: '更多资料', exact: true }).click();
   await page.getByRole('tab', { name: 'AI评审', exact: true }).click();
   await expect(
     page.getByRole('button', { name: '开始AI评审', exact: true }),
@@ -180,7 +179,6 @@ test('TXT/DOCX/PDF解析、需求填入及AI配置复用与评审展示（模型
     } else await route.fulfill({ json: { items: reports } });
   });
   await page.reload();
-  await page.getByRole('button', { name: '更多资料', exact: true }).click();
   await page.getByRole('tab', { name: 'AI评审', exact: true }).click();
   await page
     .getByRole('checkbox', {
@@ -200,7 +198,6 @@ test('TXT/DOCX/PDF解析、需求填入及AI配置复用与评审展示（模型
   });
   reports[0].stale = true;
   await page.reload();
-  await page.getByRole('button', { name: '更多资料', exact: true }).click();
   await page.getByRole('tab', { name: 'AI评审', exact: true }).click();
   await expect(
     page.getByText('资料已变更 · 需重评', { exact: true }),

@@ -1,0 +1,115 @@
+.iteration-module {
+  min-width: 0;
+}
+.iteration-heading {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: flex-start;
+  margin: 16px 0;
+}
+.iteration-layout {
+  display: grid;
+  grid-template-columns: minmax(220px, 1fr) minmax(0, 3fr);
+  gap: 20px;
+  align-items: start;
+}
+.iteration-list {
+  display: grid;
+  gap: 10px;
+  min-width: 0;
+}
+.iteration-choice {
+  background: var(--surface, #fff);
+  color: inherit;
+  text-align: left;
+  border: 1px solid var(--border, #dce5eb);
+  border-radius: 10px;
+  padding: 14px;
+  cursor: pointer;
+  display: grid;
+  gap: 7px;
+  overflow-wrap: anywhere;
+}
+.iteration-choice.active {
+  border-color: var(--primary, #1469d8);
+  box-shadow: inset 3px 0 var(--primary, #1469d8);
+}
+.iteration-choice small {
+  color: #6b7280;
+}
+.iteration-detail {
+  min-width: 0;
+  display: grid;
+  gap: 16px;
+  scroll-margin-top: 20px;
+}
+.iteration-detail .ant-card-head-title {
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+.iteration-goal {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.iteration-milestone,
+.iteration-task {
+  padding: 16px 0;
+  border-bottom: 1px solid #e5e7eb;
+  overflow-wrap: anywhere;
+}
+.iteration-task .ant-btn-link {
+  height: auto;
+  white-space: normal;
+  text-align: left;
+  padding-left: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+.iteration-candidate {
+  padding: 12px 0;
+  overflow-wrap: anywhere;
+}
+.iteration-candidate p {
+  margin: 5px 0 0 24px;
+}
+.iteration-date-fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.iteration-events > div {
+  padding: 10px 0;
+  border-bottom: 1px solid #e5e7eb;
+  overflow-wrap: anywhere;
+}
+.iteration-events p {
+  margin: 6px 0;
+}
+.iteration-module .ant-pagination {
+  margin-top: 14px;
+}
+@media (max-width: 800px) {
+  .iteration-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .iteration-heading {
+    flex-wrap: wrap;
+  }
+  .iteration-date-fields {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .iteration-list {
+    max-height: 330px;
+    overflow-y: auto;
+  }
+  .iteration-detail .ant-card-head {
+    padding: 12px;
+  }
+  .iteration-detail .ant-card-body {
+    padding: 14px;
+  }
+  .iteration-detail .ant-card-extra {
+    margin-left: 8px;
+  }
+}

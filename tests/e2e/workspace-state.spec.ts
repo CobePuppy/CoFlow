@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+test.use({ actionTimeout: 15000 });
 import { PrismaClient } from '@prisma/client';
 import { randomUUID } from 'node:crypto';
 
@@ -128,7 +129,8 @@ test('页面状态恢复、看板完整翻页、筛选清空与团队项目切�
   await page.getByRole('button', { name: '清空筛选', exact: true }).click();
   await expect(page.getByLabel('搜索需求', { exact: true })).toHaveValue('');
   await expect(page.locator('.board .ant-card')).toHaveCount(100);
-  await page.getByRole('button', { name: '状态项目B', exact: false }).click();
+  await page.locator('.project-selector .ant-select-selector').click();
+  await page.getByTitle('状态项目B', { exact: true }).click();
   expect(new URL(page.url()).searchParams.get('project')).toBe(projectB);
   await page.reload();
   await expect(

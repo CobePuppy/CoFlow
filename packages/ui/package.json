@@ -1,0 +1,12 @@
+{
+  "name": "@coflow/ui",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./lazy-page": "./src/lazy-page.tsx"
+  },
+  "dependencies": {
+    "react": "^19.1.0",
+    "antd": "^5.27.0"
+  }
+}

@@ -1,0 +1,702 @@
+.shell.project-space {
+  --primary: #387a52;
+  --accent: #387a52;
+  --accent-soft: #edf4e8;
+  --accent-faint: #f3f7ef;
+  --canvas: #f5f7f3;
+  background: #f5f7f3;
+  --sidebar: 232px;
+}
+.shell.project-space > aside {
+  background: #e5efdf;
+  border-right: 1px solid #d3e0cd;
+  color: #42674d;
+  padding: 22px 16px;
+  gap: 0;
+}
+.project-brand {
+  padding: 10px 8px;
+  background: transparent;
+  border-radius: 0;
+  margin-bottom: 18px;
+  position: relative;
+}
+.project-brand .brand-image {
+  display: block;
+  width: 100%;
+}
+.project-brand > span {
+  display: block;
+  text-align: right;
+  color: #5a795f;
+  font-size: 10px;
+  letter-spacing: 2px;
+  margin-top: 5px;
+}
+.shell.project-space > aside .nav-item {
+  color: #42674d;
+  font-size: 13px;
+  padding: 11px 12px;
+  margin-bottom: 4px;
+}
+.shell.project-space > aside .nav-item:hover {
+  background: #d8e6d3;
+}
+.shell.project-space > aside .nav-item.active {
+  background: #cbded0;
+  color: #285e3e;
+  box-shadow: inset 3px 0 #51885b;
+}
+.shell.project-space > aside .project-back {
+  font-size: 12px;
+  color: #617d60;
+  margin-bottom: 15px;
+}
+.project-selector {
+  padding: 0;
+  background: transparent;
+  border: 0;
+  border-radius: 8px;
+  margin-bottom: 18px;
+}
+.project-selector > span {
+  display: block;
+  color: #617d60;
+  font-size: 11px;
+  margin-bottom: 7px;
+}
+.project-selector .ant-select {
+  width: 100%;
+}
+.project-selector .ant-select-selector {
+  background: #f4f8ef !important;
+  border-color: #c9dbc0 !important;
+  padding: 10px 12px !important;
+}
+.project-nav-footer {
+  margin-top: auto;
+  padding-top: 24px;
+}
+.project-nav-footer > .ant-btn {
+  color: #42674d;
+  font-size: 12px;
+}
+.project-global-links {
+  border-top: 1px solid #ccddc6;
+  padding-top: 10px;
+  margin-top: 12px;
+}
+.project-global-links small {
+  margin-left: auto;
+  font-size: 11px;
+  background: #cbded0;
+  padding: 1px 6px;
+  border-radius: 4px;
+}
+.project-space > aside .team-switcher {
+  margin: 12px 0;
+  background: #f0f5ea;
+  border-color: #d1deca;
+}
+.project-space > aside .account-menu-root {
+  border-top: 1px solid #ccddc6;
+  padding-top: 12px;
+}
+.project-space > aside .account-menu-root strong,
+.project-space > aside .account-menu-root .muted {
+  color: #42674d;
+}
+.project-space > aside .mobile-nav-close {
+  color: #42674d;
+}
+.project-space > main {
+  min-width: 0;
+}
+.project-space > main > header {
+  background: #fff;
+  border-bottom: 1px solid #e1e8e2;
+  padding: 0 30px;
+  font-size: 12px;
+  height: 64px;
+}
+.project-space .content {
+  padding: 25px 30px;
+}
+.project-heading {
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 22px;
+}
+.project-heading > div:first-child {
+  min-width: 0;
+}
+.project-heading h1 {
+  font-size: 25px;
+  line-height: 1.4;
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+.project-eyebrow {
+  color: #6e8b76;
+  font-size: 11px;
+  margin: 0 0 7px !important;
+}
+.project-description {
+  max-width: 760px;
+  font-size: 12px;
+  color: #6f8378;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  margin-top: 10px;
+}
+.project-description summary {
+  cursor: pointer;
+  white-space: normal;
+  line-height: 1.7;
+}
+.project-description p {
+  margin: 10px 0 0;
+}
+.project-space .ant-btn-primary {
+  background: #387a52;
+  border-color: #387a52;
+}
+.project-space .ant-btn-primary:not(:disabled):hover {
+  background: #306a47 !important;
+  border-color: #306a47 !important;
+}
+.project-metrics {
+  display: flex;
+  gap: 0;
+  align-items: center;
+  background: white;
+  border: 1px solid #dfe7df;
+  border-radius: 8px;
+  padding: 12px 8px;
+  margin-bottom: 22px;
+  flex-wrap: wrap;
+}
+.project-metrics button {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  padding: 2px 20px;
+  border: 0;
+  border-right: 1px solid #e4ebe1;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+  color: #617b6b;
+  font: inherit;
+  font-size: 12px;
+}
+.project-metrics button:hover {
+  color: #387a52;
+}
+.project-metrics strong {
+  font-size: 22px;
+  font-weight: 600;
+  color: #315f49;
+}
+.project-metrics-note {
+  margin-left: auto;
+  padding-right: 14px;
+  color: #7b9183;
+  font-size: 11px;
+}
+.requirement-workbench-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 20px;
+  align-items: start;
+}
+.requirement-workbench-layout.has-preview {
+  grid-template-columns: minmax(0, 1fr) 300px;
+}
+.project-space .task-panel {
+  border: 1px solid #dfe7df;
+  border-radius: 9px;
+  overflow: hidden;
+  min-width: 0;
+}
+.project-workbench-title {
+  padding: 20px 20px 0;
+  margin: 0;
+  font-size: 18px;
+}
+.project-space .task-panel-controls {
+  padding-top: 14px;
+}
+.project-space .saved-views {
+  font-size: 12px;
+}
+.project-space .saved-views .muted {
+  font-size: 11px;
+}
+.project-space .toolbar {
+  gap: 12px;
+}
+.project-space .toolbar > .ant-space {
+  min-width: 0;
+}
+.project-space .ant-table {
+  font-size: 13px;
+}
+.project-space .ant-table-cell {
+  padding: 18px 12px !important;
+}
+.project-row-selected > td {
+  background: #f0f6ea !important;
+}
+.project-row-selected > td:first-child {
+  box-shadow: inset 3px 0 #5c9766;
+}
+.requirement-title-link {
+  border: 0;
+  padding: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  line-height: 1.7;
+}
+.requirement-title-link:hover {
+  color: #387a52;
+  text-decoration: underline;
+}
+.project-space .task-sub {
+  font-size: 12px;
+  line-height: 1.7;
+  max-width: 420px;
+}
+.project-mobile-cards {
+  display: none;
+}
+.requirement-preview {
+  position: sticky;
+  top: 20px;
+  min-width: 0;
+  border: 1px solid #dfe7df;
+  border-radius: 9px;
+  background: #fff;
+  max-height: calc(100vh - 40px);
+  overflow: auto;
+}
+.preview-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-bottom: 1px solid #e4ebe1;
+  font-size: 12px;
+  color: #65826d;
+}
+.preview-body {
+  padding: 18px;
+}
+.preview-body h2 {
+  font-size: 19px;
+  overflow-wrap: anywhere;
+}
+.preview-tags {
+  margin: 14px 0 20px;
+}
+.preview-next {
+  padding: 14px;
+  background: #f0f6ea;
+  border: 1px solid #dce8d2;
+  border-radius: 6px;
+  margin: 20px 0;
+}
+.preview-next strong {
+  color: #4b7248;
+  font-size: 12px;
+}
+.preview-next p {
+  font-size: 12px;
+  color: #6e8569;
+}
+.preview-description {
+  font-size: 13px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  max-height: 200px;
+  overflow: auto;
+}
+.preview-body h3 {
+  font-size: 14px;
+}
+.preview-body > .muted {
+  font-size: 12px;
+}
+.preview-body .ant-descriptions-item-label,
+.preview-body .ant-descriptions-item-content {
+  font-size: 12px;
+}
+.project-overview {
+  background: #fff;
+  border: 1px solid #dfe7df;
+  padding: 24px;
+  border-radius: 9px;
+}
+.project-overview h2 {
+  font-size: 20px;
+  margin: 0;
+}
+.project-overview-actions {
+  display: flex;
+  gap: 12px;
+  margin: 22px 0;
+}
+@media (max-width: 1199px) {
+  .requirement-workbench-layout.has-preview {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .project-metrics-note {
+    display: none;
+  }
+  .project-metrics button {
+    padding-inline: 14px;
+  }
+  .project-heading {
+    flex-wrap: wrap;
+  }
+}
+@media (max-width: 650px) {
+  .project-space > main > header {
+    padding: 0 14px;
+  }
+  .project-space .content {
+    padding: 20px 14px;
+  }
+  .project-heading h1 {
+    font-size: 22px;
+  }
+  .project-heading {
+    gap: 12px;
+  }
+  .project-heading > .ant-space {
+    width: 100%;
+  }
+  .project-description {
+    font-size: 12px;
+  }
+  .project-metrics {
+    gap: 12px;
+    padding: 12px;
+  }
+  .project-metrics button {
+    padding: 0;
+    border: 0;
+    font-size: 11px;
+    gap: 7px;
+    flex-basis: 45%;
+  }
+  .project-metrics strong {
+    font-size: 19px;
+  }
+  .project-workbench-title {
+    padding: 16px 16px 0;
+    font-size: 17px;
+  }
+  .project-space .toolbar > .ant-space {
+    max-width: 100%;
+  }
+  .project-desktop-table {
+    display: none;
+  }
+  .project-mobile-cards {
+    display: block;
+    padding: 0 16px 16px;
+  }
+  .project-mobile-cards article {
+    padding: 18px 0;
+    border-bottom: 1px solid #e3ebe1;
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+  }
+  .project-mobile-cards article > .muted {
+    font-size: 11px;
+  }
+  .project-mobile-cards article p {
+    margin: 0;
+    font-size: 12px;
+    color: #718574;
+  }
+  .project-mobile-cards article .ant-space {
+    flex-wrap: wrap;
+  }
+  .project-mobile-cards .ant-pagination {
+    margin-top: 16px;
+  }
+  .project-overview {
+    padding: 18px;
+  }
+}
+
+.project-space .task-panel {
+  position: relative;
+}
+.project-workbench-title {
+  padding-right: 115px;
+}
+.project-space
+  .task-panel:has(.project-workbench-title)
+  > .toolbar
+  > .ant-space-compact {
+  position: absolute;
+  right: 20px;
+  top: 18px;
+}
+.project-space .toolbar .ant-input-search {
+  width: 190px !important;
+}
+.project-space .toolbar .ant-select[aria-label='筛选全部状态'] {
+  width: 120px !important;
+}
+.project-space .toolbar .ant-select[aria-label='筛选负责人'] {
+  width: 110px !important;
+}
+.project-space .toolbar .ant-select[aria-label='筛选优先级'] {
+  width: 90px !important;
+}
+.project-space .toolbar .ant-checkbox-wrapper,
+.project-space .toolbar .ant-btn {
+  font-size: 12px;
+}
+.project-desktop-table td:first-child {
+  min-width: 250px;
+}
+.project-desktop-table td:nth-child(4) {
+  white-space: nowrap;
+}
+.project-desktop-table td:last-child .ant-space {
+  flex-wrap: nowrap;
+}
+@media (max-width: 650px) {
+  .shell.project-space > aside {
+    padding-top: 52px;
+  }
+  .project-space > aside .mobile-nav-close {
+    z-index: 2;
+    top: 10px;
+    right: 12px;
+  }
+  .project-space
+    .task-panel:has(.project-workbench-title)
+    > .toolbar
+    > .ant-space-compact {
+    right: 16px;
+    top: 14px;
+  }
+  .project-space .toolbar .ant-input-search {
+    width: 100% !important;
+  }
+}
+
+.project-space > main > header > span:first-of-type {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.project-space .toolbar .ant-select[aria-label='筛选优先级'] {
+  width: 110px !important;
+}
+.project-desktop-table th:nth-child(5),
+.project-desktop-table td:nth-child(5) {
+  white-space: nowrap;
+  min-width: 90px;
+}
+@media (max-width: 650px) {
+  .project-space .task-scope-tabs > .ant-tabs-nav .ant-tabs-nav-wrap {
+    overflow: visible;
+    flex: 1 1 100%;
+  }
+  .project-space .task-scope-tabs .ant-tabs-nav-list {
+    width: 100%;
+    flex-wrap: wrap;
+    gap: 6px 16px;
+    transform: none !important;
+  }
+  .project-space .task-scope-tabs .ant-tabs-tab {
+    margin: 0 !important;
+    padding: 8px 0;
+    border-bottom: 2px solid transparent;
+  }
+  .project-space .task-scope-tabs .ant-tabs-tab-active {
+    border-bottom-color: #387a52;
+  }
+  .project-space .task-scope-tabs .ant-tabs-ink-bar,
+  .project-space .task-scope-tabs .ant-tabs-nav-operations,
+  .project-space .task-scope-tabs .ant-tabs-nav-wrap::before,
+  .project-space .task-scope-tabs .ant-tabs-nav-wrap::after {
+    display: none !important;
+  }
+}
+
+.project-brand .brand-image img {
+  width: 100%;
+  height: 56px;
+  object-fit: contain;
+  mix-blend-mode: multiply;
+}
+.project-selector .ant-select-single {
+  height: auto;
+  min-height: 80px;
+}
+.project-selector .ant-select-selection-item {
+  white-space: normal;
+  padding-inline-end: 18px !important;
+  line-height: 1.6 !important;
+}
+.project-choice {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+.project-choice-icon {
+  flex: 0 0 28px;
+  height: 28px;
+  display: grid;
+  place-items: center;
+  background: #d5e5ca;
+  border-radius: 5px;
+  color: #52764b;
+}
+.project-choice-copy {
+  min-width: 0;
+}
+.project-choice-copy strong {
+  display: block;
+  color: #355b3d;
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+.project-choice-copy small {
+  display: block;
+  color: #718567;
+  font-size: 10px;
+  margin-top: 3px;
+}
+.project-selector .ant-select-arrow {
+  color: #617d60;
+}
+
+.project-overview-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+  margin-top: 24px;
+}
+.overview-block {
+  border: 1px solid #dfe7df;
+  border-radius: 8px;
+  padding: 20px;
+  min-width: 0;
+}
+.overview-block h3 {
+  margin: 0 0 18px;
+  font-size: 15px;
+}
+.overview-block .muted {
+  font-size: 12px;
+  line-height: 1.7;
+}
+.overview-stage {
+  display: grid;
+  grid-template-columns: 95px minmax(0, 1fr) 28px;
+  align-items: center;
+  gap: 12px;
+  margin: 12px 0;
+  font-size: 12px;
+}
+.overview-quality {
+  display: flex;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+.overview-quality strong {
+  font-size: 24px;
+  color: #387a52;
+}
+.overview-block .ant-list-item {
+  gap: 12px;
+  overflow-wrap: anywhere;
+}
+@media (max-width: 800px) {
+  .project-overview-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .overview-block {
+    padding: 16px;
+  }
+}
+
+.github-default-form {
+  display: grid;
+  gap: 12px;
+}
+
+/* Demand workbench: keep context and work controls readable. */
+.requirement-results {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+  padding: 12px 20px;
+  border-bottom: 1px solid #e2e9df;
+  font-size: 12px;
+}
+.requirement-results > [role='status'] {
+  font-weight: 600;
+  color: #355b3d;
+}
+.requirement-results .ant-tag {
+  margin: 0;
+  max-width: 100%;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+.preview-navigation {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-bottom: 1px solid #e2e9df;
+}
+.preview-navigation .muted {
+  font-size: 11px;
+}
+.preview-actions {
+  margin-bottom: 12px;
+}
+.preview-criteria {
+  padding-left: 20px;
+  line-height: 1.8;
+  overflow-wrap: anywhere;
+}
+.preview-next .ant-space {
+  max-width: 100%;
+}
+.project-desktop-table .task-sub {
+  margin-top: 6px;
+  color: #617d60;
+}
+.project-desktop-table .ant-tag {
+  margin-block: 3px;
+}
+@media (min-width: 1200px) {
+  .requirement-workbench-layout.has-preview {
+    grid-template-columns: minmax(0, 1fr) 340px;
+  }
+}
+@media (max-width: 650px) {
+  .requirement-results {
+    padding: 12px 16px;
+  }
+  .preview-navigation {
+    padding-inline: 0;
+  }
+}

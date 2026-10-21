@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 
 test('创建团队、复制团队码与队员自助注册', async ({ page, browser }) => {
   const suffix = Date.now();
-  await page.goto('/');
+  await page.goto('/enterprise/');
   await page.getByRole('tab', { name: '注册', exact: true }).click();
   await page.getByLabel('姓名', { exact: true }).fill('自助创建者');
   await page
@@ -29,11 +29,12 @@ test('创建团队、复制团队码与队员自助注册', async ({ page, brows
     .getByRole('navigation', { name: '首页导航' })
     .getByRole('button', { name: '团队', exact: true })
     .click();
+  await page.getByRole('button', { name: '团队设置', exact: true }).click();
   await expect(page.getByText(code, { exact: true })).toBeVisible();
   const context = await browser.newContext();
   try {
     const member = await context.newPage();
-    await member.goto('/');
+    await member.goto('/enterprise/');
     await member.getByRole('tab', { name: '注册', exact: true }).click();
     await member.getByText('我是团队队员', { exact: true }).click();
     await member.getByLabel('姓名', { exact: true }).fill('自助队员');

@@ -1,1 +1,27 @@
-{"name":"@coflow/api","private":true,"type":"module","scripts":{"dev":"tsx watch src/main.ts","build":"esbuild src/main.ts --bundle --platform=node --packages=external --format=esm --outfile=dist/main.js","start":"node dist/main.js"},"devDependencies":{"esbuild":"^0.25.0"}}
+{
+  "name": "@coflow/api",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/main.ts",
+    "build": "node build.mjs",
+    "start": "node dist/main.js"
+  },
+  "devDependencies": {
+    "esbuild": "^0.25.0"
+  },
+  "dependencies": {
+    "@coflow/contracts": "workspace:*",
+    "@nestjs/common": "^11.1.0",
+    "@nestjs/core": "^11.1.0",
+    "@nestjs/platform-express": "^11.1.0",
+    "@prisma/client": "6.19.0",
+    "argon2": "^0.44.0",
+    "dotenv": "^17.2.0",
+    "express": "^5.1.0",
+    "multer": "^2.0.0",
+    "reflect-metadata": "^0.2.2",
+    "rxjs": "^7.8.0",
+    "zod": "^4.1.0"
+  }
+}

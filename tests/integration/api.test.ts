@@ -1,7 +1,7 @@
 import {
   reviewSources,
   reviewFingerprint,
-} from '../../apps/api/src/ai-quality.js';
+} from '../../apps/api/src/modules/ai/quality.js';
 import 'dotenv/config';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -66,8 +66,10 @@ test('隔离 PostgreSQL：业务闭环、权限、并发幂等、历史、冲突
       assert.equal(response.status, 200);
       assert.match(response.headers.get('content-type') || '', /text\/html/);
       const html = await response.text();
-      const asset = html.match(/src="(\/assets\/[^"]+\.js)"/);
-      assert(asset, '生产页面应使用根路径静态资源');
+      const asset = html.match(
+        /src="(\/(?:student\/|enterprise\/)?assets\/[^"]+\.js)"/,
+      );
+      assert(asset, '生产页面应使用版本独立的静态资源');
       assert.equal(
         (await fetch('http://127.0.0.1:3101' + asset[1])).status,
         200,
@@ -758,7 +760,9 @@ test('隔离 PostgreSQL：业务闭环、权限、并发幂等、历史、冲突
       ],
     };
     const findingB = { ...findingA, id: crypto.randomUUID() };
-    const { claimsDigest } = await import('../../apps/api/src/proofloop.js');
+    const { claimsDigest } = await import(
+      '../../apps/api/src/modules/proofloop/routes.js'
+    );
     await db.proofBoard.update({
       where: { competitionId: competition.data.id },
       data: {
@@ -816,7 +820,7 @@ test('隔离 PostgreSQL：业务闭环、权限、并发幂等、历史、冲突
     assert.equal(exportedProof.data.payload.unresolved.length, 1);
     assert.match(exportedProof.data.markdown, /证据已过期/);
     const { canonicalJson } = await import(
-      '../../apps/api/src/proof-export.js'
+      '../../apps/api/src/modules/proofloop/export.js'
     );
     assert.equal(
       exportedProof.data.digest,
@@ -1156,6 +1160,22 @@ test('隔离 PostgreSQL：业务闭环、权限、并发幂等、历史、冲突
     assert.equal(overview.status, 200);
     assert(overview.data.projects.some((x: any) => x.id === destination.id));
     assert(overview.data.todos.some((x: any) => x.id === moveDraft.id));
+    for (const project of overview.data.projects) {
+      const expected = project.archivedAt
+        ? 0
+        : await db.task.count({
+            where: {
+              projectId: project.id,
+              deletedAt: null,
+              status: { notIn: ['CLOSED', 'CANCELLED'] },
+            },
+          });
+      assert.equal(
+        project.openTasks,
+        expected,
+        '首页计数排除归档项目、回收站和终态需求',
+      );
+    }
     assert.equal(
       (await other.request('/workspaces/' + settingsTeam + '/overview')).status,
       404,
@@ -1854,6 +1874,57 @@ test('隔离 PostgreSQL：业务闭环、权限、并发幂等、历史、冲突
         data: { content: '非法覆盖', version: 3, revisions: [] },
       }),
     );
+    const comparison = [];
+    for (const suffix of [
+      'scope=all',
+      'scope=active',
+      'scope=ended',
+      'scope=handling',
+      'scope=mine',
+      'scope=overdue',
+      'scope=trash',
+      'scope=all&blocked=true',
+      'scope=all&q=%25',
+      'scope=all&status=SOLUTION_REVIEW',
+      'scope=all&priority=P1&page=2',
+      'scope=all&sort=due',
+      'scope=all&sort=due&page=2',
+      'scope=all&sort=priority',
+      `scope=all&q=cf-${String(t.number).padStart(3, '0')}`,
+    ]) {
+      const full = await p.request(
+        `/projects/${pid}/tasks?${suffix}&pageSize=3`,
+      );
+      const summary = await p.request(
+        `/projects/${pid}/task-summaries?${suffix}&pageSize=3`,
+      );
+      assert.equal(summary.status, 200, JSON.stringify(summary.data));
+      assert.equal(summary.data.total, full.data.total, suffix);
+      assert.deepEqual(
+        summary.data.items.map((x: any) => x.id),
+        full.data.items.map((x: any) => x.id),
+        suffix,
+      );
+      for (let index = 0; index < summary.data.items.length; index++) {
+        assert.equal(summary.data.items[index].data.history, undefined);
+        const { getHandlerIds } = await import('@coflow/contracts/index.js');
+        assert.deepEqual(
+          summary.data.items[index].handlerIds,
+          getHandlerIds(full.data.items[index]),
+        );
+      }
+      comparison.push({
+        filter: suffix,
+        fullBytes: Buffer.byteLength(JSON.stringify(full.data)),
+        summaryBytes: Buffer.byteLength(JSON.stringify(summary.data)),
+      });
+    }
+    const freshOther = await login('other');
+    assert.equal(
+      (await freshOther.request(`/projects/${pid}/task-summaries`)).status,
+      404,
+    );
+    console.log('需求列表摘要对照：', JSON.stringify(comparison));
     await p.request('/auth/logout', 'POST', {});
     assert.equal((await p.request('/auth/me')).status, 401);
     assert.equal(

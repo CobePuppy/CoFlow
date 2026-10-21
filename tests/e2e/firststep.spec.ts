@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test';
-import { firstStepSections } from '../../packages/contracts/firststep.js';
+test.use({ actionTimeout: 15000 });
+import { firstStepSections } from '@coflow/contracts/firststep.js';
 const pid = '10000000-0000-4000-8000-000000000001',
   wid = '00000000-0000-4000-8000-000000000001';
 test('个人设置持久化及FirstStepAgent失败恢复、六份成果保存（模拟模型）', async ({
@@ -73,8 +74,7 @@ test('个人设置持久化及FirstStepAgent失败恢复、六份成果保存（
     panel.locator('input[aria-label="DeepSeek API Key"]'),
   ).toHaveCount(0);
   const generate = panel.getByRole('button', {
-    name: '使用我的Key生成6份成果',
-    exact: true,
+    name: /使用我的Key生成6份成果$/,
   });
   await expect(generate).toBeDisabled();
   await panel

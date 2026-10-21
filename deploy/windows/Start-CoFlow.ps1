@@ -25,6 +25,9 @@ if ($taskListeners.Count -gt 0) {
     throw ('Website port {0} is already in use by {1}. No process was stopped. If CoFlow is already running, use the existing instance. Otherwise choose a free PORT in this deployment folder''s .env, and update APP_ORIGIN when its URL includes this port. Update the tunnel target or LAN access port as needed, then restart.' -f $taskWebPort, ($taskPortOwners -join ', '))
 }
 if (-not (Test-Path -LiteralPath (Join-Path $taskRoot 'apps\web\dist\index.html'))) { throw 'Missing frontend build. Run pnpm build first.' }
+foreach ($taskEdition in @('enterprise','student')) {
+    if (-not (Test-Path -LiteralPath (Join-Path $taskRoot ('apps\web\dist\' + $taskEdition + '\index.html')))) { throw ('Missing ' + $taskEdition + ' frontend build. Rebuild the complete v3 package.') }
+}
 if (-not (Test-Path -LiteralPath (Join-Path $taskRoot 'apps\api\dist\main.js'))) { throw 'Missing API build. Run pnpm build first.' }
 $taskNode = Join-Path $taskRoot 'runtime\node.exe'
 if (-not (Test-Path -LiteralPath $taskNode)) { throw 'Bundled Node runtime is missing.' }

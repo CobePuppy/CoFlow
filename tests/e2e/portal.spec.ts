@@ -4,7 +4,7 @@ test('中文首页、应用分类收藏、项目成员与独立文件库', async
   page,
   browser,
 }) => {
-  await page.goto('/');
+  await page.goto('/enterprise/');
   await page.getByLabel('邮箱', { exact: true }).fill('product@coflow.local');
   await page
     .getByLabel('密码', { exact: true })
@@ -52,6 +52,7 @@ test('中文首页、应用分类收藏、项目成员与独立文件库', async
     page.getByRole('button', { name: '创建项目', exact: true }),
   ).toBeVisible();
   await nav.getByRole('button', { name: '知识库', exact: true }).click();
+  await page.getByRole('tab', { name: '项目资料', exact: true }).click();
   await page.getByRole('tab', { name: /文件库/ }).click();
   const filename = `知识库验证-${Date.now()}.txt`;
   await page.locator('input[type=file]').setInputFiles({

@@ -1,0 +1,30 @@
+.about-coflow {
+  display: grid;
+  gap: 20px;
+  min-width: 0;
+}
+.about-coflow .brand-image {
+  width: 220px;
+}
+.about-coflow h2 {
+  margin: 20px 0 10px;
+}
+.about-coflow li {
+  line-height: 1.9;
+  margin-bottom: 12px;
+  overflow-wrap: anywhere;
+}
+.about-coflow ul {
+  padding-inline-start: 22px;
+}
+.about-coflow .ant-collapse-header-text {
+  min-width: 0;
+}
+@media (max-width: 650px) {
+  .about-coflow .ant-card-body {
+    padding: 16px;
+  }
+  .about-coflow .ant-collapse-content-box {
+    padding: 12px !important;
+  }
+}

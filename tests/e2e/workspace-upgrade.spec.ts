@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 
-test('四区工作台、项目设置删除与需求所属选择', async ({ page }) => {
+test('工作概览、项目设置删除与需求所属选择', async ({ page }) => {
   const suffix = Date.now(),
     origin = 'http://localhost:5174';
   const email = `dashboard-${suffix}@example.com`,
@@ -50,7 +50,8 @@ test('四区工作台、项目设置删除与需求所属选择', async ({ page 
       '&project=' +
       source.id,
   );
-  for (const name of ['我的项目', '我的待办', '竞赛与截止提醒', '最近成果'])
+  await expect(page.locator('.work-stat-grid')).toBeVisible();
+  for (const name of ['我的项目', '竞赛与截止提醒', '最近成果'])
     await expect(
       page
         .locator('.work-dashboard .ant-card-head-title')
@@ -89,6 +90,9 @@ test('四区工作台、项目设置删除与需求所属选择', async ({ page 
   expect(
     (await page.request.get('/api/v1/projects/' + empty.id)).status(),
   ).toBe(404);
+  await page
+    .getByRole('button', { name: 'folder 工作台项目A', exact: true })
+    .click();
   await page.getByRole('button', { name: '新建需求', exact: true }).click();
   const editor = page.getByRole('dialog').filter({
     has: page.getByRole('heading', { name: '创建需求', exact: true }),
@@ -99,8 +103,11 @@ test('四区工作台、项目设置删除与需求所属选择', async ({ page 
     .filter({ has: page.getByText('所属项目', { exact: true }) })
     .locator('.ant-select-selector')
     .click();
-  await page.getByTitle('工作台项目B', { exact: true }).click();
-  await editor.getByRole('button', { name: '创建需求', exact: true }).click();
+  await page
+    .locator('.ant-select-dropdown:visible')
+    .getByTitle('工作台项目B', { exact: true })
+    .click();
+  await editor.getByRole('button', { name: '保存草稿', exact: true }).click();
   await expect(editor).not.toBeVisible();
   const tasks = await (
     await page.request.get('/api/v1/projects/' + target.id + '/tasks')
@@ -126,7 +133,11 @@ test('四区工作台、项目设置删除与需求所属选择', async ({ page 
     .filter({ has: page.getByText('所属项目', { exact: true }) })
     .locator('.ant-select-selector')
     .click();
-  await page.getByTitle('工作台项目A', { exact: true }).click();
+  await page
+    .locator('.ant-select-dropdown:visible')
+    .getByTitle('工作台项目A', { exact: true })
+    .click();
+  await draftEditor.getByRole('button', { name: /完善更多信息/ }).click();
   for (const label of [
     '产品负责人',
     '研发负责人',

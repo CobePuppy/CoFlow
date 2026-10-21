@@ -342,7 +342,7 @@ test('列表快捷编辑与管理员转交：保存生效、无意外打开详�
     .getByRole('dialog')
     .getByRole('button', { name: '保存', exact: true })
     .click();
-  await expect(row).toContainText('2026/12/31');
+  await expect(row).toContainText('2026-12-31');
   await expect(page.locator('.task-detail-drawer')).toHaveCount(0);
   await row.getByRole('button', { name: '更多操作', exact: true }).click();
   await page
@@ -352,7 +352,15 @@ test('列表快捷编辑与管理员转交：保存生效、无意外打开详�
     .getByRole('dialog')
     .getByLabel('需求负责人', { exact: true })
     .click();
-  await page.getByTitle(auth.user.name, { exact: true }).click();
+  const currentMember = people.find((p: any) => p.id === auth.user.id);
+  await page
+    .getByRole('dialog')
+    .getByLabel('需求负责人', { exact: true })
+    .fill(currentMember.name);
+  await page
+    .locator('.ant-select-dropdown:visible')
+    .getByTitle(currentMember.name, { exact: true })
+    .click();
   await page
     .getByRole('dialog')
     .getByRole('button', { name: '保存', exact: true })

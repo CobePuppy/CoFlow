@@ -4,7 +4,10 @@ import { createHash } from 'node:crypto';
 import { createRequire } from 'node:module';
 import { spawnSync } from 'node:child_process';
 const digest = (value) => createHash('sha256').update(value).digest('hex');
-const out = path.resolve(process.argv[2] || 'artifacts/platform-20261017');
+const version = JSON.parse(fs.readFileSync('version.json', 'utf8'));
+const out = path.resolve(
+  process.argv[2] || `artifacts/CoFlow-v${version.product}`,
+);
 if (fs.existsSync(out))
   throw new Error('Release output already exists: ' + out);
 fs.mkdirSync(path.join(out, 'payload'), { recursive: true });
@@ -34,27 +37,70 @@ const generated = spawnSync(
 );
 if (generated.error) throw generated.error;
 if (generated.status !== 0) throw new Error('Prisma client generation failed');
+const esbuildCli = require.resolve('esbuild/bin/esbuild', {
+  paths: [path.resolve('apps/api')],
+});
+const verifier = path.join(out, 'proof-verifier.js');
+const compiled = spawnSync(
+  process.execPath,
+  [
+    esbuildCli,
+    'scripts/maintenance/verify-proof.ts',
+    '--bundle',
+    '--platform=node',
+    '--format=esm',
+    '--outfile=' + verifier,
+  ],
+  { stdio: 'inherit' },
+);
+if (compiled.status !== 0) throw new Error('Proof verifier build failed');
 for (const [source, target] of [
   ['apps/api/dist', 'apps/api/dist'],
   ['apps/web/dist', 'apps/web/dist'],
   ['prisma/migrations', 'prisma/migrations'],
   ['prisma/schema.prisma', 'prisma/schema.prisma'],
   [path.join(clientBuild, 'client'), 'node_modules/.prisma/client'],
-  ['artifacts/release-20261017-verify-proof.js', 'scripts/verify-proof.js'],
+  ['version.json', 'version.json'],
+  ['CHANGELOG.md', 'CHANGELOG.md'],
+  [verifier, 'scripts/verify-proof.js'],
 ])
   fs.cpSync(source, path.join(payload, target), { recursive: true });
+// Ship the matching maintenance tools with the API so independent file spaces
+// participate in backups and orphan detection on installations without tsx.
+for (const name of ['backup', 'storage-cleanup']) {
+  const output = path.join(payload, 'apps/api/dist/maintenance', name + '.js');
+  fs.mkdirSync(path.dirname(output), { recursive: true });
+  const result = spawnSync(
+    process.execPath,
+    [
+      esbuildCli,
+      `scripts/maintenance/${name}.ts`,
+      '--bundle',
+      '--packages=external',
+      '--platform=node',
+      '--format=esm',
+      '--outfile=' + output,
+    ],
+    { stdio: 'inherit' },
+  );
+  if (result.error) throw result.error;
+  if (result.status !== 0) throw new Error(name + ' maintenance build failed');
+}
 const migrations = fs
   .readdirSync('prisma/migrations', { withFileTypes: true })
   .filter((e) => e.isDirectory())
   .map((e) => e.name)
   .sort();
 const meta = {
+  version,
   id:
-    '20261017-platform-' +
+    version.product.replaceAll('.', '-') +
+    '-platform-' +
     digest(
       Buffer.concat([
         fs.readFileSync('apps/api/dist/main.js'),
-        fs.readFileSync('apps/web/dist/index.html'),
+        fs.readFileSync('apps/web/dist/enterprise/index.html'),
+        fs.readFileSync('apps/web/dist/student/index.html'),
       ]),
     ).slice(0, 8),
   builtAt: new Date().toISOString(),

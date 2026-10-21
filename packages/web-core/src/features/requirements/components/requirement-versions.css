@@ -1,0 +1,27 @@
+.requirement-diff section {
+  margin: 16px 0;
+}
+.requirement-diff-columns {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 12px;
+}
+.requirement-diff-columns > div {
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid var(--border, #e5e7eb);
+  border-radius: 8px;
+}
+.requirement-diff pre {
+  font: inherit;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  max-height: 360px;
+  overflow: auto;
+  margin: 8px 0 0;
+}
+@media (max-width: 640px) {
+  .requirement-diff-columns {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

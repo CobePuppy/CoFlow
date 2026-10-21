@@ -2,6 +2,25 @@ generator client {
   provider = "prisma-client-js"
 }
 
+model GitHubAccount {
+  userId String @id
+  login String?
+  credentials String?
+  attempt String?
+}
+
+model TaskGitHub {
+  taskId String @id
+  version Int @default(1)
+  data Json
+}
+
+model ProjectGitHub {
+  projectId String @id
+  version Int @default(1)
+  data Json
+}
+
 model ProjectFork {
   id String @id @default(uuid())
   workspaceId String
@@ -138,11 +157,27 @@ model Notification {
   workspaceId String
   projectId String
   taskId String
+  discussionId String?
   message String
   dedupe String @unique
   readAt DateTime?
   createdAt DateTime @default(now())
   @@index([recipientId,readAt,createdAt])
+}
+model SavedView {
+  id String @id @default(uuid())
+  workspaceId String
+  userId String
+  name String
+  view String
+  mode String
+  projectId String?
+  filters Json
+  version Int @default(1)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@unique([workspaceId,userId,name])
+  @@index([userId,workspaceId])
 }
 model AuditEvent {
   id String @id @default(uuid())
@@ -226,4 +261,110 @@ model QQIntegration {
  webUrl String
  version Int @default(1)
  updatedAt DateTime @updatedAt
+}
+
+// Standalone files do not inherit project membership or project archive state.
+model SpaceFile {
+  id String @id @default(uuid())
+  scope String
+  ownerId String?
+  workspaceId String?
+  userId String
+  key String @unique
+  name String
+  mime String
+  size Int
+  version Int @default(1)
+  contentVersion Int @default(1)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime?
+  deletedBy String?
+  @@index([ownerId,deletedAt,createdAt])
+  @@index([workspaceId,deletedAt,createdAt])
+}
+model SpaceFileRevision {
+  id String @id @default(uuid())
+  fileId String
+  number Int
+  key String
+  name String
+  mime String
+  size Int
+  summary String
+  createdBy String
+  createdAt DateTime @default(now())
+  @@unique([fileId,number])
+  @@index([key])
+}
+model SpaceFileEvent {
+  id String @id @default(uuid())
+  fileId String
+  actorId String
+  action String
+  createdAt DateTime @default(now())
+  @@index([fileId,createdAt])
+}
+
+// References are separate from task snapshots, so project forks do not copy grants.
+model TaskResource {
+ id String @id @default(uuid())
+ taskId String
+ kind String
+ sourceId String
+ sourceVersion Int
+   fileVersion Int?
+ title String
+ sourceScope String
+ personalShared Boolean @default(false)
+ createdBy String
+ taskTitle String
+ createdAt DateTime @default(now())
+ @@unique([taskId,kind,sourceId])
+ @@index([sourceId,kind])
+}
+
+model Iteration {
+ id String @id @default(uuid())
+ workspaceId String
+ projectId String
+ name String
+ goal String
+ ownerId String
+ startDate String
+ endDate String
+ version Int @default(1)
+ createdBy String
+ createdAt DateTime @default(now())
+ updatedAt DateTime @updatedAt
+ @@index([projectId,endDate])
+}
+model IterationMilestone {
+ id String @id @default(uuid())
+ iterationId String
+ name String
+ goal String @default("")
+ dueDate String
+ createdAt DateTime @default(now())
+ @@unique([id,iterationId])
+ @@index([iterationId,dueDate])
+}
+model IterationTask {
+ id String @id @default(uuid())
+ iterationId String
+ taskId String @unique
+ milestoneId String?
+ delayNote String @default("")
+ createdBy String
+ createdAt DateTime @default(now())
+ @@index([iterationId,milestoneId])
+}
+model IterationEvent {
+ id String @id @default(uuid())
+ iterationId String
+ actorId String
+ action String
+ data Json
+ createdAt DateTime @default(now())
+ @@index([iterationId,createdAt])
 }

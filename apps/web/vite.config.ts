@@ -1,5 +1,7 @@
+import { productInfoPlugin } from '../../scripts/release/product-info.ts';
 import { defineConfig } from 'vite';
 export default defineConfig({
+  plugins: [productInfoPlugin()],
   server: {
     host: '127.0.0.1',
     port: 5173,

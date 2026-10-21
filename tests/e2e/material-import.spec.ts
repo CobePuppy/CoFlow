@@ -89,7 +89,7 @@ test('已上传方案MD、开发DOCX及测试TXT/MD可解析填表，确认前�
       source,
     );
     await qa.goto(`/student/?app=work&task=${task.id}`);
-    await qa.getByRole('tab', { name: '开发资料', exact: true }).click();
+    await qa.getByRole('tab', { name: '方案与评审', exact: true }).click();
     await expect(
       qa.getByRole('button', {
         name: '解析附件并填入：开发方案.md',
@@ -97,12 +97,14 @@ test('已上传方案MD、开发DOCX及测试TXT/MD可解析填表，确认前�
       }),
     ).toBeDisabled();
     await eng.goto(`/student/?app=work&task=${task.id}`);
-    await eng.getByRole('tab', { name: '开发资料', exact: true }).click();
+    await eng.getByRole('tab', { name: '方案与评审', exact: true }).click();
     await expect(
       eng.getByText('开发交付与自测', { exact: true }),
-    ).toBeVisible();
+    ).not.toBeVisible();
     await expect(
-      eng.getByText('测试与验收', { exact: true }),
+      eng
+        .locator('.delivery-materials')
+        .getByText('测试与验收', { exact: true }),
     ).not.toBeVisible();
     await eng
       .getByRole('button', { name: '解析附件并填入：开发方案.md', exact: true })
@@ -230,8 +232,12 @@ test('已上传方案MD、开发DOCX及测试TXT/MD可解析填表，确认前�
       '## 测试执行记录\n导出文件可打开，内容一致。\n## 部署验证说明\n测试环境部署正常。';
     await upload(qc.request, q, task.id, 'TESTING', '测试报告.md', testText);
     await qa.reload();
-    await qa.getByRole('tab', { name: '测试资料', exact: true }).click();
-    await expect(qa.getByText('测试与验收', { exact: true })).toBeVisible();
+    await qa.getByRole('tab', { name: '测试与验收', exact: true }).click();
+    await expect(
+      qa
+        .locator('.delivery-materials')
+        .getByText('测试与验收', { exact: true }),
+    ).toBeVisible();
     await expect(qa.getByText('技术方案', { exact: true })).not.toBeVisible();
     await qa
       .getByRole('button', { name: '解析附件并填入：测试报告.md', exact: true })

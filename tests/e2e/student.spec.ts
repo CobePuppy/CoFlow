@@ -136,9 +136,23 @@ test('学生版独立网址、竞赛登记、文书修订及版间入口', async
       .getByRole('navigation', { name: '首页导航' })
       .getByRole('button', { name: '竞赛管理', exact: true }),
   ).toHaveCount(0);
+  await expect(page.getByRole('navigation', { name: '版本入口' })).toHaveCount(
+    0,
+  );
+  await page.goto('/enterprise/?section=settings&settingsTab=preferences');
   await page
-    .getByRole('navigation', { name: '版本入口' })
-    .getByRole('link', { name: '学生版', exact: true })
+    .locator('.ant-form-item')
+    .filter({ hasText: '默认产品版本' })
+    .locator('.ant-select-selector')
+    .click();
+  await page
+    .locator('.ant-select-dropdown:visible')
+    .getByTitle('学生版', { exact: true })
+    .click();
+  await page.getByRole('button', { name: '保存设置', exact: true }).click();
+  await expect(page.getByText('设置已保存', { exact: true })).toBeVisible();
+  await page
+    .getByRole('button', { name: '切换到所选版本', exact: true })
     .click();
   await expect(
     page.getByRole('heading', { name: '工作台', exact: true }),

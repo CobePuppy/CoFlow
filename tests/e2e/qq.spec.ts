@@ -8,7 +8,7 @@ test('成员管理中生成、使用和解除 QQ 绑定，并适配窄屏', asyn
     !process.env.QQ_BOT_TOKEN || !process.env.QQ_BOT_WORKSPACE_ID,
     '需要显式启用隔离测试 QQ 集成',
   );
-  await page.goto('/');
+  await page.goto('/enterprise/');
   await page.getByLabel('邮箱', { exact: true }).fill('engineer@coflow.local');
   await page
     .getByLabel('密码', { exact: true })

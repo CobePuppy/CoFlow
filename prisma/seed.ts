@@ -2,8 +2,11 @@ import 'dotenv/config';
 import { PrismaClient } from '@prisma/client';
 import argon2 from 'argon2';
 import { randomUUID } from 'node:crypto';
-import { execute, handlers } from '../apps/api/src/domain.js';
-import type { Task, Member } from '../packages/contracts/index.js';
+import {
+  execute,
+  handlers,
+} from '../apps/api/src/modules/requirements/domain.js';
+import type { Task, Member } from '@coflow/contracts/index.js';
 const db = new PrismaClient();
 const titles = [
   '支持项目维度的交付进度概览',

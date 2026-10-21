@@ -22,7 +22,8 @@ for (const failure of [false, true])
           contexts.push(c);
           const page = await c.newPage();
           pages.push(page);
-          await page.goto('/');
+          await page.goto('/enterprise/');
+          await page.waitForLoadState('networkidle');
           await page
             .getByLabel('邮箱', { exact: true })
             .fill(email + '@coflow.local');
@@ -37,7 +38,9 @@ for (const failure of [false, true])
           ).toBeVisible();
           await page.getByRole('button', { name: '进入需求协作' }).click();
           await expect(
-            page.getByRole('tab', { name: '需求', exact: true }),
+            page
+              .getByRole('navigation', { name: '项目导航' })
+              .getByRole('button', { name: '需求与交付', exact: true }),
           ).toBeVisible();
           auth.push(await (await c.request.get('/api/v1/auth/me')).json());
         }
@@ -164,7 +167,7 @@ for (const failure of [false, true])
   );
 
 test('新建需求表单、看板、中文品牌与窄屏导航', async ({ page }) => {
-  await page.goto('/');
+  await page.goto('/enterprise/');
   await expect(page.locator('.brand').first()).toContainText('汇流');
   await page.getByLabel('邮箱', { exact: true }).fill('product@coflow.local');
   await page
@@ -306,8 +309,8 @@ test('新建需求表单、看板、中文品牌与窄屏导航', async ({ page 
   await page.setViewportSize({ width: 1440, height: 980 });
   await page.getByRole('button', { name: '返回需求列表', exact: true }).click();
   await page
-    .getByRole('button', { name: '汇流 协作平台', exact: false })
-    .first()
+    .getByRole('navigation', { name: '项目导航' })
+    .getByRole('button', { name: '需求与交付', exact: true })
     .click();
   await page.getByRole('button', { name: '看板视图', exact: true }).click();
   await expect(page.locator('.board-column')).toHaveCount(10);
@@ -318,9 +321,13 @@ test('新建需求表单、看板、中文品牌与窄屏导航', async ({ page 
   await page.setViewportSize({ width: 390, height: 844 });
   await expect(page.getByRole('button', { name: '打开导航' })).toBeVisible();
   await page.getByRole('button', { name: '打开导航' }).click();
-  await expect(page.locator('aside .brand')).toBeInViewport();
+  await expect(
+    page.locator('aside .brand, aside .project-brand'),
+  ).toBeInViewport();
   await page.getByRole('button', { name: '关闭导航', exact: true }).click();
-  await expect(page.locator('aside .brand')).not.toBeInViewport();
+  await expect(
+    page.locator('aside .brand, aside .project-brand'),
+  ).not.toBeInViewport();
   await page.screenshot({
     path: 'artifacts/browser/board-mobile.png',
     fullPage: true,

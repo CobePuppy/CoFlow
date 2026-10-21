@@ -1,0 +1,90 @@
+.file-space {
+  padding: 20px 0;
+}
+.file-space-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+.file-space-heading h2 {
+  margin: 0 0 10px;
+  font-size: 20px;
+}
+.file-space-heading p {
+  margin: 0;
+  color: #68758a;
+  line-height: 1.8;
+  max-width: 720px;
+}
+.file-space-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 20px;
+  font-size: 12px;
+}
+.space-file-list {
+  border: 1px solid #e4e9e6;
+  border-radius: 10px;
+  margin: 20px 0;
+  background: white;
+}
+.space-file-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px;
+  border-bottom: 1px solid #edf0ec;
+}
+.space-file-row:last-child {
+  border-bottom: 0;
+}
+.space-file-icon {
+  background: #edf5ef;
+  color: #438366;
+  font-size: 22px;
+  padding: 12px;
+  border-radius: 9px;
+}
+.space-file-copy {
+  min-width: 0;
+  flex: 1;
+}
+.space-file-copy strong {
+  overflow-wrap: anywhere;
+}
+.space-file-copy p {
+  color: #819087;
+  font-size: 12px;
+  margin: 8px 0 0;
+}
+.file-space .ant-pagination {
+  margin-top: 20px;
+}
+.file-space-tabs > .ant-tabs-nav .ant-tabs-tab {
+  padding-block: 16px;
+}
+@media (max-width: 650px) {
+  .file-space-heading {
+    flex-direction: column;
+  }
+  .space-file-row {
+    flex-wrap: wrap;
+    padding: 16px;
+    gap: 12px;
+  }
+  .space-file-actions {
+    width: 100%;
+    padding-left: 0;
+  }
+  .space-file-icon {
+    padding: 10px;
+  }
+  .file-space-tabs .ant-tabs-nav-wrap {
+    max-width: 100%;
+  }
+}

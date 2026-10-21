@@ -7,7 +7,7 @@ import { fileURLToPath } from 'node:url';
 
 const digest = value => createHash('sha256').update(value).digest('hex');
 const arg = name => { const i = process.argv.indexOf('--' + name); return i < 0 ? '' : process.argv[i + 1]; };
-const allowed = /^(apps\/(api|web)\/dist\/|prisma\/(schema\.prisma|migrations\/)|node_modules\/\.prisma\/client\/|scripts\/verify-proof\.js$)/;
+const allowed = /^(apps\/(api|web)\/dist\/|prisma\/(schema\.prisma|migrations\/)|node_modules\/\.prisma\/client\/|scripts\/verify-proof\.js$|version\.json$|CHANGELOG\.md$)/;
 function within(root, relative) {
   const target = path.resolve(root, relative), rest = path.relative(root, target);
   if (!rest || rest.startsWith('..') || path.isAbsolute(rest) || !allowed.test(relative)) throw new Error('Unexpected release target: ' + relative);

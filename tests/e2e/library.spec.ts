@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+test.use({ actionTimeout: 15000 });
 import { PrismaClient } from '@prisma/client';
 import { randomUUID } from 'node:crypto';
 
@@ -46,7 +47,7 @@ test('超过100条任务：历史附件、完整关联选项与跨团队隔离',
   } finally {
     await db.$disconnect();
   }
-  await page.goto('/');
+  await page.goto('/enterprise/');
   await page.getByLabel('邮箱', { exact: true }).fill('product@coflow.local');
   await page
     .getByLabel('密码', { exact: true })
@@ -77,7 +78,7 @@ test('超过100条任务：历史附件、完整关联选项与跨团队隔离',
   ).json();
   expect(firstPage.items.some((t: any) => t.id === taskId)).toBeFalsy();
   await page.goto(
-    `/?section=library&workspace=${me.user.workspaceId || '00000000-0000-4000-8000-000000000001'}`,
+    `/?section=library&project=${pid}&workspace=${me.user.workspaceId || '00000000-0000-4000-8000-000000000001'}`,
   );
   await page.getByRole('tab', { name: /文件库/ }).click();
   await page.getByLabel('搜索当前页面').fill(filename);
@@ -112,7 +113,7 @@ test('超过100条任务：历史附件、完整关联选项与跨团队隔离',
   ]);
   const document = documents.find((d: any) => d.title === title);
   await page.goto('/?task=' + taskId);
-  await page.getByRole('tab', { name: '关联文档', exact: true }).click();
+  await page.getByRole('tab', { name: '关联资料', exact: true }).click();
   await page.getByRole('link', { name: title, exact: true }).click();
   await expect(page.getByRole('dialog', { name: '项目文档' })).toBeVisible();
   await expect(page.getByLabel('文档标题')).toHaveValue(title);
@@ -124,7 +125,7 @@ test('超过100条任务：历史附件、完整关联选项与跨团队隔离',
     .getByRole('link')
     .click();
   await expect(page).toHaveURL(new RegExp('task=' + taskId));
-  await page.getByRole('tab', { name: '关联文档', exact: true }).click();
+  await page.getByRole('tab', { name: '关联资料', exact: true }).click();
   await expect(
     page.getByRole('link', { name: title, exact: true }),
   ).toBeVisible();
@@ -165,8 +166,6 @@ test('超过100条任务：历史附件、完整关联选项与跨团队隔离',
   });
   expect(unlink.ok(), await unlink.text()).toBeTruthy();
   await page.reload();
-  await page.getByRole('tab', { name: '关联文档', exact: true }).click();
-  await expect(
-    page.getByText('暂无关联文档，可在知识库编辑文档时关联此需求'),
-  ).toBeVisible();
+  await page.getByRole('tab', { name: '关联资料', exact: true }).click();
+  await expect(page.getByText('尚未引用资料')).toBeVisible();
 });

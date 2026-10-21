@@ -1,11 +1,12 @@
 import { test, expect } from '@playwright/test';
+test.use({ actionTimeout: 15000 });
 const pid = '10000000-0000-4000-8000-000000000001';
 const origin = 'http://localhost:5174';
 test('项目模板创建、套用确认、草稿保存模板与停用', async ({ page }) => {
   const suffix = Date.now(),
     name = `接口模板-${suffix}`,
     title = `模板需求-${suffix}`;
-  await page.goto('/');
+  await page.goto('/enterprise/');
   await page.getByLabel('邮箱', { exact: true }).fill('product@coflow.local');
   await page
     .getByLabel('密码', { exact: true })
@@ -49,7 +50,7 @@ test('项目模板创建、套用确认、草稿保存模板与停用', async ({
   await task.getByRole('button', { name: '应用需求模板', exact: true }).click();
   await page
     .getByRole('dialog', { name: '应用需求模板', exact: true })
-    .getByRole('button', { name: '应用并替换', exact: true })
+    .getByRole('button', { name: '填入所选字段', exact: true })
     .click();
   await expect(task.getByLabel('需求标题', { exact: true })).toHaveValue(title);
   await expect(task.getByLabel('目标', { exact: true })).toHaveValue(
@@ -71,7 +72,7 @@ test('项目模板创建、套用确认、草稿保存模板与停用', async ({
   await save.getByLabel('保存模板名称', { exact: true }).fill(name + '复用');
   await save.getByRole('button', { name: '确认保存模板', exact: true }).click();
   await expect(save).toHaveCount(0);
-  await task.getByRole('button', { name: '创建需求', exact: true }).click();
+  await task.getByRole('button', { name: '保存草稿', exact: true }).click();
   await expect(task).toHaveCount(0);
   const tasks = await (
     await page.request.get(
@@ -90,6 +91,7 @@ test('项目模板创建、套用确认、草稿保存模板与停用', async ({
   const copy = templates.items.find((x: any) => x.name === name + '复用');
   expect(copy.content).not.toHaveProperty('productId');
   expect(copy.content).not.toHaveProperty('dueAt');
+  await page.goto(`/?app=work&project=${pid}&view=templates`);
   const card = page
     .locator('.ant-card')
     .filter({ has: page.getByText(name, { exact: true }) });

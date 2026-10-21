@@ -171,21 +171,25 @@ test('各环节附件上传、权限、软删除和恢复', async ({ page, brows
     await expect(
       requirement.getByRole('link', { name: '页面上传.txt', exact: true }),
     ).toBeVisible();
-    await page.getByRole('tab', { name: '开发资料', exact: true }).click();
-    for (const stage of ['方案附件', '评估附件', '开发交付附件']) {
+    await page.getByRole('tab', { name: '方案与评审', exact: true }).click();
+    for (const stage of ['方案附件', '评估附件']) {
       await expect(
         page
           .getByRole('region', { name: stage, exact: true })
           .getByRole('button', { name: /上传附件/ }),
       ).toBeVisible();
     }
-    await page.getByRole('tab', { name: '测试资料', exact: true }).click();
+    await page.getByRole('tab', { name: '开发交付', exact: true }).click();
+    await expect(
+      page.getByRole('region', { name: '开发交付附件', exact: true }),
+    ).toBeVisible();
+    await page.getByRole('tab', { name: '测试与验收', exact: true }).click();
     for (const stage of ['测试附件', '验收附件']) {
       await expect(
         page.getByRole('region', { name: stage, exact: true }),
       ).toBeVisible();
     }
-    await page.getByRole('tab', { name: '开发资料', exact: true }).click();
+    await page.getByRole('tab', { name: '方案与评审', exact: true }).click();
     const panel = page.getByRole('region', { name: '方案附件', exact: true });
     await panel.getByRole('button', { name: /删\s*除/ }).click();
     await page

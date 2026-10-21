@@ -8,15 +8,9 @@ importers:
 
   .:
     dependencies:
-      '@nestjs/common':
-        specifier: ^11.1.0
-        version: 11.2.7(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@8.1.1)
-      '@nestjs/core':
-        specifier: ^11.1.0
-        version: 11.2.7(@nestjs/common@11.2.7(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@8.1.1))(@nestjs/platform-express@11.2.7)(reflect-metadata@0.2.2)(rxjs@7.8.2)
-      '@nestjs/platform-express':
-        specifier: ^11.1.0
-        version: 11.2.7(@nestjs/common@11.2.7(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@8.1.1))(@nestjs/core@11.2.7)(supports-color@8.1.1)
+      '@coflow/contracts':
+        specifier: workspace:*
+        version: link:packages/contracts
       '@prisma/client':
         specifier: 6.19.0
         version: 6.19.0(prisma@6.19.0(typescript@5.9.3))(typescript@5.9.3)
@@ -26,18 +20,6 @@ importers:
       dotenv:
         specifier: ^17.2.0
         version: 17.4.2
-      express:
-        specifier: ^5.1.0
-        version: 5.3.0(supports-color@8.1.1)
-      multer:
-        specifier: ^2.0.0
-        version: 2.4.0
-      reflect-metadata:
-        specifier: ^0.2.2
-        version: 0.2.2
-      rxjs:
-        specifier: ^7.8.0
-        version: 7.8.2
       zod:
         specifier: ^4.1.0
         version: 4.6.7
@@ -80,16 +62,103 @@ importers:
         version: 5.9.3
 
   apps/api:
+    dependencies:
+      '@coflow/contracts':
+        specifier: workspace:*
+        version: link:../../packages/contracts
+      '@nestjs/common':
+        specifier: ^11.1.0
+        version: 11.2.7(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@8.1.1)
+      '@nestjs/core':
+        specifier: ^11.1.0
+        version: 11.2.7(@nestjs/common@11.2.7(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@8.1.1))(@nestjs/platform-express@11.2.7)(reflect-metadata@0.2.2)(rxjs@7.8.2)
+      '@nestjs/platform-express':
+        specifier: ^11.1.0
+        version: 11.2.7(@nestjs/common@11.2.7(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@8.1.1))(@nestjs/core@11.2.7)(supports-color@8.1.1)
+      '@prisma/client':
+        specifier: 6.19.0
+        version: 6.19.0(prisma@6.19.0(typescript@5.9.3))(typescript@5.9.3)
+      argon2:
+        specifier: ^0.44.0
+        version: 0.44.0
+      dotenv:
+        specifier: ^17.2.0
+        version: 17.4.2
+      express:
+        specifier: ^5.1.0
+        version: 5.3.0(supports-color@8.1.1)
+      multer:
+        specifier: ^2.0.0
+        version: 2.4.0
+      reflect-metadata:
+        specifier: ^0.2.2
+        version: 0.2.2
+      rxjs:
+        specifier: ^7.8.0
+        version: 7.8.2
+      zod:
+        specifier: ^4.1.0
+        version: 4.6.7
     devDependencies:
       esbuild:
         specifier: ^0.25.0
         version: 0.25.12
+
+  apps/enterprise-web:
+    dependencies:
+      '@coflow/web-core':
+        specifier: workspace:*
+        version: link:../../packages/web-core
+      react:
+        specifier: ^19.1.0
+        version: 19.3.1
+      react-dom:
+        specifier: ^19.1.0
+        version: 19.3.1(react@19.3.1)
+    devDependencies:
+      vite:
+        specifier: ^7.1.0
+        version: 7.3.7(@types/node@24.19.2)(jiti@2.7.0)(tsx@4.23.15)
+
+  apps/student-web:
+    dependencies:
+      '@ant-design/icons':
+        specifier: ^6.1.0
+        version: 6.3.4(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
+      '@coflow/contracts':
+        specifier: workspace:*
+        version: link:../../packages/contracts
+      '@coflow/web-core':
+        specifier: workspace:*
+        version: link:../../packages/web-core
+      '@tanstack/react-query':
+        specifier: ^5.90.0
+        version: 5.104.2(react@19.3.1)
+      antd:
+        specifier: ^5.27.0
+        version: 5.29.3(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
+      react:
+        specifier: ^19.1.0
+        version: 19.3.1
+      react-dom:
+        specifier: ^19.1.0
+        version: 19.3.1(react@19.3.1)
+      react-router-dom:
+        specifier: ^7.9.0
+        version: 7.18.4(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
+    devDependencies:
+      vite:
+        specifier: ^7.1.0
+        version: 7.3.7(@types/node@24.19.2)(jiti@2.7.0)(tsx@4.23.15)
 
   apps/web:
     dependencies:
       '@ant-design/icons':
         specifier: ^6.1.0
         version: 6.3.4(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
+      '@coflow/web-core':
+        specifier: workspace:*
+        version: link:../../packages/web-core
       '@tanstack/react-query':
         specifier: ^5.90.0
         version: 5.104.2(react@19.3.1)
@@ -127,7 +196,65 @@ importers:
         specifier: ^7.1.0
         version: 7.3.7(@types/node@24.19.2)(jiti@2.7.0)(tsx@4.23.15)
 
-  packages/contracts: {}
+  packages/contracts:
+    dependencies:
+      zod:
+        specifier: ^4.1.0
+        version: 4.6.7
+
+  packages/ui:
+    dependencies:
+      antd:
+        specifier: ^5.27.0
+        version: 5.29.3(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
+      react:
+        specifier: ^19.1.0
+        version: 19.3.1
+
+  packages/web-core:
+    dependencies:
+      '@ant-design/icons':
+        specifier: ^6.1.0
+        version: 6.3.4(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
+      '@coflow/contracts':
+        specifier: workspace:*
+        version: link:../contracts
+      '@coflow/ui':
+        specifier: workspace:*
+        version: link:../ui
+      '@tanstack/react-query':
+        specifier: ^5.90.0
+        version: 5.104.2(react@19.3.1)
+      antd:
+        specifier: ^5.27.0
+        version: 5.29.3(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
+      dompurify:
+        specifier: 3.3.1
+        version: 3.3.1
+      fflate:
+        specifier: 0.8.3
+        version: 0.8.3
+      mermaid:
+        specifier: file:../../vendor/mermaid-11.12.2.tgz
+        version: file:vendor/mermaid-11.12.2.tgz
+      pdfjs-dist:
+        specifier: file:../../vendor/pdfjs-dist-6.4.299.tgz
+        version: file:vendor/pdfjs-dist-6.4.299.tgz
+      react:
+        specifier: ^19.1.0
+        version: 19.3.1
+      react-dom:
+        specifier: ^19.1.0
+        version: 19.3.1(react@19.3.1)
+      react-markdown:
+        specifier: ^10.1.0
+        version: 10.1.0(@types/react@19.3.0)(react@19.3.1)(supports-color@8.1.1)
+      react-router-dom:
+        specifier: ^7.9.0
+        version: 7.18.4(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
+      remark-gfm:
+        specifier: 4.0.1
+        version: 4.0.1(supports-color@8.1.1)
 
 packages:
 
@@ -5452,4 +5579,3 @@ snapshots:
   zod@4.6.7: {}
 
   zwitch@2.0.4: {}
-

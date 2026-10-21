@@ -1,0 +1,78 @@
+.github-panel {
+  display: grid;
+  gap: 16px;
+  min-width: 0;
+}
+.github-picker {
+  margin: 12px 0;
+  max-width: 100%;
+}
+.github-reference-form {
+  display: grid;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.github-reference > p {
+  flex-basis: 100%;
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+.github-panel .ant-card-body {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.github-panel .ant-alert {
+  margin-top: 12px;
+}
+.github-connect {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.github-meta {
+  overflow-wrap: anywhere;
+  color: #647574;
+  font-size: 12px;
+}
+.github-files {
+  display: grid;
+  gap: 4px;
+  margin-top: 12px;
+}
+.github-files .ant-btn {
+  text-align: left;
+  justify-content: flex-start;
+  white-space: normal;
+  height: auto;
+  min-height: 32px;
+  overflow-wrap: anywhere;
+}
+.github-reference {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  border-bottom: 1px solid #eee;
+  padding: 8px 0;
+}
+.github-reference .ant-btn-link {
+  max-width: 100%;
+  white-space: normal;
+  height: auto;
+  overflow-wrap: anywhere;
+}
+.github-source,
+.github-excerpt {
+  overflow: auto;
+  max-height: 65vh;
+  padding: 16px;
+  background: #f5f8f7;
+  font: 13px/1.7 monospace;
+  tab-size: 2;
+}
+@media (max-width: 640px) {
+  .github-connect {
+    grid-template-columns: 1fr;
+  }
+}
