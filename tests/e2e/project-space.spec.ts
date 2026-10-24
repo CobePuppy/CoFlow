@@ -126,6 +126,7 @@ test('项目空间：独立导航、真实速览、项目隔离、两版入口�
     await expect(
       page.getByRole('heading', { name: '项目交付总览', exact: true }),
     ).toBeVisible();
+    await page.getByRole('tab', { name: '交付统计', exact: true }).click();
     await expect(
       page.getByRole('heading', { name: '需求阶段分布', exact: true }),
     ).toBeVisible();
@@ -242,6 +243,7 @@ test('项目空间：独立导航、真实速览、项目隔离、两版入口�
     path: 'artifacts/v3.2.0-overview-mobile.png',
     animations: 'disabled',
   });
+  await page.getByRole('tab', { name: '交付统计', exact: true }).click();
   await page
     .getByRole('button', { name: '进入需求与交付', exact: true })
     .click();

@@ -3,6 +3,9 @@ import type { QueryClient, QueryKey } from '@tanstack/react-query';
 // Task changes can affect cross-project references, so invalidate task-related
 // families while retaining account settings, members and unrelated page data.
 const taskFamilies = new Set([
+  'projectAssistant',
+  'projectProgress',
+  'projectGoals',
   'task',
   'discussionCenter',
   'taskDiscussions',

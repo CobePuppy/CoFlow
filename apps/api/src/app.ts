@@ -1,3 +1,6 @@
+import { installProjectAssistantRoutes } from './modules/ai/project-assistant-routes.js';
+import { installProjectProgressRoutes } from './modules/project-progress/routes.js';
+import { installGoalRoutes } from './modules/goals/routes.js';
 import { installFileRevisionRoutes } from './modules/file-spaces/revisions.js';
 import { installDiscussionQueries } from './modules/requirements/discussion-queries.js';
 import { installDiscussionRoutes } from './modules/requirements/discussions.js';
@@ -62,6 +65,9 @@ installWorkspacesRoutes(router);
 installProjectsRoutes(router);
 installOverviewRoutes(router);
 installAiRoutes(router);
+installProjectAssistantRoutes(router);
+installProjectProgressRoutes(router);
+installGoalRoutes(router);
 installCompetitionsRoutes(router);
 installTemplatesRoutes(router);
 installRequirementsRoutes(router);

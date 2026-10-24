@@ -531,10 +531,13 @@ export default function Workspace({ user }: { user: any }) {
               {view === 'project-overview' ? (
                 <ProjectOverview
                   project={project}
+                  onOpen={open}
+                  user={user}
                   query={stats}
                   onTasks={(scope = 'all') =>
                     navigate({ view: 'tasks', scope, page: null }, true)
                   }
+                  onIterations={() => projectNavigate('iterations')}
                   onDocuments={() => projectNavigate('documents')}
                 />
               ) : view === 'github' ? (

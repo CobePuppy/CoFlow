@@ -34,6 +34,70 @@ model ProjectFork {
   updatedAt DateTime @updatedAt
   @@index([projectId])
 }
+
+model ProjectGoal {
+  id String @id @default(uuid())
+  projectId String
+  workspaceId String
+  title String
+  description String
+  criteria String[]
+  ownerId String
+  dueDate String?
+  status String @default("ACTIVE")
+  version Int @default(1)
+  events Json
+  createdBy String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([projectId,status])
+}
+model ProjectGoalTask {
+  goalId String
+  taskId String
+  @@id([goalId,taskId])
+  @@index([taskId])
+}
+model ProjectGoalIteration {
+  goalId String
+  iterationId String
+  @@id([goalId,iterationId])
+  @@index([iterationId])
+}
+
+model ProjectAction {
+  id String @id @default(uuid())
+  workspaceId String
+  projectId String
+  taskId String
+  sourceKey String
+  sourceVersion Int
+  title String
+  acceptance String
+  evidence String
+  ownerId String?
+  dueDate String?
+  status String @default("OPEN")
+  outcome String @default("")
+  createdBy String
+  version Int @default(1)
+  events Json
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@unique([projectId,sourceKey])
+  @@index([projectId,status])
+}
+
+model ProjectCheckpoint {
+  id String @id @default(uuid())
+  workspaceId String
+  projectId String
+  createdBy String
+  note String
+  snapshot Json
+  createdAt DateTime @default(now())
+  @@index([projectId,createdAt])
+}
 datasource db {
   provider = "postgresql"
   url = env("DATABASE_URL")

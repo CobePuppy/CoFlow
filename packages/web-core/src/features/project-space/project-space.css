@@ -640,6 +640,34 @@
   gap: 12px;
 }
 
+.project-progress .ant-btn-link {
+  max-width: 100%;
+  height: auto;
+  white-space: normal;
+  text-align: left;
+  overflow-wrap: anywhere;
+}
+.project-command-center .ant-btn-link {
+  max-width: 100%;
+  height: auto;
+  white-space: normal;
+  text-align: left;
+  overflow-wrap: anywhere;
+}
+.project-command-center details {
+  margin-top: 12px;
+}
+.project-command-center li,
+.project-command-center .ant-collapse-header-text {
+  overflow-wrap: anywhere;
+}
+.project-progress details {
+  margin-top: 12px;
+}
+.project-progress li {
+  overflow-wrap: anywhere;
+}
+
 /* Demand workbench: keep context and work controls readable. */
 .requirement-results {
   display: flex;

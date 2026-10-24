@@ -1,8 +1,8 @@
 {
-  "product": "3.14.3",
-  "web": "3.14.3",
-  "api": "2.21.1",
-  "categories": ["frontend"],
-  "date": "2026-10-21",
+  "product": "4.3.0",
+  "web": "3.18.0",
+  "api": "2.25.0",
+  "categories": ["frontend", "backend", "feature", "maintenance"],
+  "date": "2026-10-22",
   "status": "validated"
 }

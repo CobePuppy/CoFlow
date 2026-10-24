@@ -131,10 +131,13 @@ export function installProjectsRoutes(router: express.Router) {
           tx.competition.count({ where: { projectId: p.id } }),
           tx.requirementTemplate.count({ where: { projectId: p.id } }),
           tx.projectFork.count({ where: { projectId: p.id } }),
+          tx.projectAction.count({ where: { projectId: p.id } }),
+          tx.projectCheckpoint.count({ where: { projectId: p.id } }),
+          tx.projectGoal.count({ where: { projectId: p.id } }),
         ]);
         assert(
           counts.every((n) => n === 0),
-          '项目仍有需求、文档、附件、竞赛、模板或分身，请先归档保留数据；仅空项目可永久删除',
+          '项目仍有需求、文档、附件、竞赛、模板、分身或推进记录，请先归档保留数据；仅空项目可永久删除',
           409,
         );
         await tx.projectMember.deleteMany({ where: { projectId: p.id } });

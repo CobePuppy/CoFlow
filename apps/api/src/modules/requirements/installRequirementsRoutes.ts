@@ -415,6 +415,8 @@ export function installRequirementsRoutes(router: express.Router) {
           );
           const refs = await Promise.all([
             tx.iterationTask.count({ where: { taskId: t.id } }),
+            tx.projectAction.count({ where: { taskId: t.id } }),
+            tx.projectGoalTask.count({ where: { taskId: t.id } }),
             tx.taskResource.count({ where: { taskId: t.id } }),
             tx.taskGitHub
               .findUnique({ where: { taskId: t.id } })
@@ -430,7 +432,7 @@ export function installRequirementsRoutes(router: express.Router) {
           ]);
           assert(
             refs.every((n) => n === 0),
-            '需求已有关联材料、迭代安排、通知或缺陷，请先解除关联再调整项目',
+            '需求已有关联材料、迭代、行动、通知或缺陷；有行动历史的需求应保留原项目',
             409,
           );
           const linkedPlans = [
@@ -543,7 +545,17 @@ export function installRequirementsRoutes(router: express.Router) {
           409,
         );
         await tx.notification.deleteMany({ where: { taskId: t.id } });
+        assert(
+          !(await tx.projectAction.count({ where: { taskId: t.id } })),
+          '仍有行动历史，请保留回收站记录',
+          409,
+        );
         await tx.attachment.deleteMany({ where: { taskId: t.id } });
+        assert(
+          !(await tx.projectGoalTask.count({ where: { taskId: t.id } })),
+          '仍有目标引用，请先解除目标关联或保留回收站记录',
+          409,
+        );
         await tx.task.delete({ where: { id: t.id } });
         await record(tx, r, t.workspaceId, t.id, 'TASK_PURGE');
       });
