@@ -128,6 +128,9 @@ export function TaskEditor({
   const currentProject =
     choices.data?.find((p: any) => p.id === projectId) || context.data;
   const simple = (initial?.workflow || currentProject?.workflow) === 'SIMPLE';
+  const compact =
+    !simple &&
+    (initial?.roleMode || currentProject?.roleMode) === 'COMPACT';
   const { modal, message } = App.useApp();
   const qc = useQueryClient();
   const templates = useQuery<TemplateList>({
@@ -177,8 +180,12 @@ export function TaskEditor({
       productId: owner(['PRODUCT']),
       engineerId: owner(['ENGINEER']),
       testerId: owner(['QA', 'OPS']),
-      productReviewerId: owner(['PRODUCT']),
-      qaReviewerId: owner(['QA']),
+      ...(compact
+        ? {}
+        : {
+            productReviewerId: owner(['PRODUCT']),
+            qaReviewerId: owner(['QA']),
+          }),
     };
     const missing = Object.fromEntries(
       Object.entries(defaults).filter(
@@ -186,7 +193,7 @@ export function TaskEditor({
       ),
     );
     if (Object.keys(missing).length) form.setFieldsValue(missing);
-  }, [open, members, initial, form, simple]);
+  }, [open, members, initial, form, simple, compact]);
   return (
     <>
       <Modal
@@ -349,6 +356,7 @@ export function TaskEditor({
                       ...values,
                       criteria,
                       workflow: simple ? 'SIMPLE' : 'STANDARD',
+                      roleMode: compact ? 'COMPACT' : 'STANDARD',
                       blocks: [],
                     },
                   } as any,
@@ -375,7 +383,13 @@ export function TaskEditor({
                     'testerId',
                     'productReviewerId',
                     'qaReviewerId',
-                  ].map((key) => [key, values[key] || '']),
+                  ].map((key) => [
+                    key,
+                    compact &&
+                    (key === 'productReviewerId' || key === 'qaReviewerId')
+                      ? ''
+                      : values[key] || '',
+                  ]),
                 ),
                 projectId,
                 criteria: (values.criteria || '')
@@ -577,50 +591,73 @@ export function TaskEditor({
               <p>
                 {simple
                   ? '只需指定需求负责人和执行人，可以由同一人承担。'
-                  : '可分配阶段职责；方案需两位独立评估人确认。'}
+                  : compact
+                    ? '紧凑模式：只需指定需求负责人、执行人与验收人，方案评估默认由需求负责人兼任。'
+                    : '可分配阶段职责；方案需两位独立评估人确认。'}
               </p>
             </header>
+            {compact && (
+              <Alert
+                type="info"
+                showIcon
+                style={{ marginBottom: 12 }}
+                message="紧凑模式：产品评估人与测试评估人默认由需求负责人兼任（同一人兼任两项评估）"
+              />
+            )}
             <div className="requirement-owner-grid">
               {[
-                ['productId', '产品负责人', 'PRODUCT'],
-                ['engineerId', '研发负责人', 'ENGINEER'],
-                ['testerId', '测试负责人', 'QA,OPS'],
-                ['productReviewerId', '产品评估人', 'PRODUCT'],
-                ['qaReviewerId', '测试评估人', 'QA'],
-              ].map(([key, label]) => (
-                <Form.Item
-                  key={key}
-                  name={key}
-                  label={
-                    simple && key === 'engineerId'
-                      ? '执行人'
-                      : simple && key === 'productId'
+                ['productId', '产品负责人'],
+                ['engineerId', '研发负责人'],
+                ['testerId', '测试负责人'],
+                ['productReviewerId', '产品评估人'],
+                ['qaReviewerId', '测试评估人'],
+              ]
+                .map(([key, base]) => [
+                  key as string,
+                  (simple && key === 'engineerId'
+                    ? '执行人'
+                    : simple && key === 'productId'
+                      ? '需求负责人'
+                      : compact && key === 'productId'
                         ? '需求负责人'
-                        : label
-                  }
-                  hidden={
-                    simple
-                      ? !['productId', 'engineerId'].includes(key)
-                      : key !== 'productId' && !expanded
-                  }
-                  rules={[
-                    {
-                      required: false,
-                      message: `请选择${label}`,
-                    },
-                  ]}
-                >
-                  <Select
-                    showSearch
-                    optionFilterProp="label"
-                    placeholder={`选择${label}`}
-                    options={members.map((m: Member) => ({
-                      value: m.id,
-                      label: m.name,
-                    }))}
-                  />
-                </Form.Item>
-              ))}
+                        : compact && key === 'engineerId'
+                          ? '执行人'
+                          : compact && key === 'testerId'
+                            ? '验收人'
+                            : base) as string,
+                ])
+                .map(([key, label]) => (
+                  <Form.Item
+                    key={key}
+                    name={key}
+                    label={label}
+                    hidden={
+                      simple
+                        ? !['productId', 'engineerId'].includes(key)
+                        : compact
+                          ? !['productId', 'engineerId', 'testerId'].includes(
+                              key,
+                            )
+                          : key !== 'productId' && !expanded
+                    }
+                    rules={[
+                      {
+                        required: false,
+                        message: `请选择${label}`,
+                      },
+                    ]}
+                  >
+                    <Select
+                      showSearch
+                      optionFilterProp="label"
+                      placeholder={`选择${label}`}
+                      options={members.map((m: Member) => ({
+                        value: m.id,
+                        label: m.name,
+                      }))}
+                    />
+                  </Form.Item>
+                ))}
             </div>
           </section>
           <section

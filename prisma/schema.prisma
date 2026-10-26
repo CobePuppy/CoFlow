@@ -160,6 +160,7 @@ model Project {
   archivedAt DateTime?
   sequence Int @default(0)
   workflow String @default("STANDARD")
+  roleMode String @default("STANDARD")
   @@index([workspaceId])
 }
 model ProjectMember {

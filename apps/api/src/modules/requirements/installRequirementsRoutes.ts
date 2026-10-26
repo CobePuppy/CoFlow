@@ -133,6 +133,10 @@ export function installRequirementsRoutes(router: express.Router) {
         ...r.body,
         productId: r.body.productId || r.user.id,
       });
+      if (p.workflow === 'STANDARD' && p.roleMode === 'COMPACT') {
+        if (!input.productReviewerId) input.productReviewerId = input.productId;
+        if (!input.qaReviewerId) input.qaReviewerId = input.productId;
+      }
       await validateDraftOwners(p.id, input);
       const submit = z.boolean().default(false).parse(r.body.submit);
       if (submit)
@@ -171,6 +175,10 @@ export function installRequirementsRoutes(router: express.Router) {
               data: {
                 ...input,
                 workflow: p.workflow as 'SIMPLE' | 'STANDARD',
+                roleMode:
+                  p.workflow === 'STANDARD' && p.roleMode === 'COMPACT'
+                    ? 'COMPACT'
+                    : 'STANDARD',
                 createdBy: r.user.id,
                 requirementVersion: 0,
                 requirements: [],

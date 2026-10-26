@@ -137,6 +137,27 @@ export function validateOwners(d: Task['data'], members: Member[]) {
     );
     return;
   }
+  if (d.roleMode === 'COMPACT') {
+    if (!d.productReviewerId) d.productReviewerId = d.productId;
+    if (!d.qaReviewerId) d.qaReviewerId = d.productId;
+    assert(
+      has(d.productId) && has(d.engineerId) && has(d.testerId),
+      '紧凑模式请指定需求负责人、执行人与验收人',
+    );
+    assert(
+      has(d.productReviewerId) && has(d.qaReviewerId),
+      '评估人必须属于当前项目',
+    );
+    assert(
+      d.engineerId !== d.productReviewerId && d.engineerId !== d.qaReviewerId,
+      '执行人不能评估自己的方案',
+    );
+    assert(
+      d.testerId !== d.qaReviewerId,
+      '测试负责人不能评估自己的测试结果',
+    );
+    return;
+  }
   assert(
     has(d.productId) &&
       has(d.engineerId) &&
@@ -151,7 +172,11 @@ export function validateOwners(d: Task['data'], members: Member[]) {
   );
   assert(
     d.engineerId !== d.productReviewerId && d.engineerId !== d.qaReviewerId,
-    '方案提交人不能审批自己的方案',
+    '执行人不能评估自己的方案',
+  );
+  assert(
+    d.testerId !== d.qaReviewerId,
+    '测试负责人不能评估自己的测试结果',
   );
 }
 export function execute(
@@ -275,6 +300,8 @@ export function execute(
     case 'APPROVE_SOLUTION':
     case 'REJECT_SOLUTION': {
       at('SOLUTION_REVIEW');
+      const compact =
+        d.roleMode === 'COMPACT' && d.productReviewerId === d.qaReviewerId;
       const slot =
         user.id === d.productReviewerId
           ? 'PRODUCT'
@@ -283,23 +310,28 @@ export function execute(
             : null;
       assert(slot, '不是指定评估人', 403);
       assert(user.id !== d.solutions.at(-1).by, '禁止审批自己提交的方案', 403);
+      const slots = (
+        compact ? ['PRODUCT', 'QA'] : [slot]
+      ) as ('PRODUCT' | 'QA')[];
       assert(
         !d.reviews.some(
-          (r) => r.round === d.solutions.length && r.slot === slot,
+          (r) =>
+            r.round === d.solutions.length && slots.includes(r.slot as any),
         ),
         '本槽位已评估',
         409,
       );
       if (action === 'REJECT_SOLUTION') reason();
-      d.reviews.push({
-        round: d.solutions.length,
-        requirementVersion: d.requirementVersion,
-        slot,
-        userId: user.id,
-        approved: action === 'APPROVE_SOLUTION',
-        reason: p.reason || '',
-        at: now,
-      });
+      for (const slot of slots)
+        d.reviews.push({
+          round: d.solutions.length,
+          requirementVersion: d.requirementVersion,
+          slot,
+          userId: user.id,
+          approved: action === 'APPROVE_SOLUTION',
+          reason: p.reason || '',
+          at: now,
+        });
       if (action === 'REJECT_SOLUTION') {
         t.status = 'SOLUTION_PENDING';
         delete d.reviewSnapshot;

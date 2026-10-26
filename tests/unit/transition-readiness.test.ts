@@ -11,16 +11,16 @@ test('提交准备明确区分正文、成员独立性与阻塞，不替代服�
       criteria: ['可验证标准'],
       productId: 'p',
       engineerId: 'e',
-      testerId: 'q',
+      testerId: 't',
       productReviewerId: 'p',
       qaReviewerId: 'q',
       blocks: [],
     },
   };
-  assert.equal(requirementReadiness(task, ['p', 'e', 'q']).ready, true);
+  assert.equal(requirementReadiness(task, ['p', 'e', 'q', 't']).ready, true);
   task.data.goal = '';
   task.data.qaReviewerId = 'p';
-  let report = requirementReadiness(task, ['p', 'e', 'q']);
+  let report = requirementReadiness(task, ['p', 'e', 'q', 't']);
   assert(report.content.includes('目标'));
   assert(report.assignment.some((x) => x.includes('不同成员')));
   assert.equal(report.ready, false);
@@ -54,4 +54,31 @@ test('缺项定位包含正文、成员和独立性字段，简易流程省略�
       ['background', 'goal', 'qaReviewerId', 'testerId'].includes(i.field),
     ),
   );
+});
+
+test('紧凑模式仅需三角色，兼任评估不算缺项', () => {
+  const task: any = {
+    data: {
+      title: '需求',
+      background: '背景',
+      goal: '目标',
+      description: '说明',
+      criteria: ['可验证标准'],
+      workflow: 'STANDARD',
+      roleMode: 'COMPACT',
+      productId: 'p',
+      engineerId: 'e',
+      testerId: 't',
+      productReviewerId: '',
+      qaReviewerId: '',
+      blocks: [],
+    },
+  };
+  assert.equal(requirementReadiness(task, ['p', 'e', 't']).ready, true);
+  task.data.testerId = 'p';
+  const report = requirementReadiness(task, ['p', 'e', 't']);
+  assert(
+    report.assignment.some((x) => x.includes('测试负责人不能评估自己的测试结果')),
+  );
+  assert.equal(report.ready, false);
 });

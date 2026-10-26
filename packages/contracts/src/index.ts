@@ -37,6 +37,7 @@ export type Entry = {
 };
 export type TaskData = {
   workflow?: 'SIMPLE' | 'STANDARD';
+  roleMode?: 'STANDARD' | 'COMPACT';
   createdBy?: string;
   title: string;
   background: string;
@@ -109,7 +110,7 @@ export function getHandlerIds(t: Task): string[] {
   if (t.status === 'DRAFT' || t.status === 'ACCEPTANCE_PENDING')
     return [d.productId];
   if (t.status === 'SOLUTION_REVIEW')
-    return [d.productReviewerId, d.qaReviewerId].filter(
+    return [...new Set([d.productReviewerId, d.qaReviewerId])].filter(
       (id) =>
         !d.reviews.some(
           (r) => r.round === d.solutions.length && r.userId === id,

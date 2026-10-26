@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Alert, Button, Form, Input, Modal, Space, App } from 'antd';
+import { Alert, Button, Form, Input, Modal, Radio, Space, App } from 'antd';
 import { useQueryClient } from '@tanstack/react-query';
 import { api, useData } from '../../shared/api/runtime.js';
 import { Management, FileImport } from '../../app/pages.js';
@@ -61,6 +61,23 @@ export default function ProjectSettings({
             : '标准流程 · 包含独立评估和测试'}
           。现有需求沿用创建时的流程。
         </p>
+        {project.workflow === 'STANDARD' && (
+          <Form.Item
+            name="roleMode"
+            label="角色模式"
+            tooltip="紧凑模式适用于 3-5 人小团队：需求只需指定需求负责人、执行人与验收人，产品评估与测试评估默认由需求负责人兼任；切换模式不影响已有需求。"
+          >
+            <Radio.Group
+              options={[
+                { value: 'STANDARD', label: '标准模式 · 五个角色独立指定' },
+                {
+                  value: 'COMPACT',
+                  label: '紧凑模式 · 三个角色，评估由需求负责人兼任',
+                },
+              ]}
+            />
+          </Form.Item>
+        )}
         <Form
           form={form}
           layout="vertical"
