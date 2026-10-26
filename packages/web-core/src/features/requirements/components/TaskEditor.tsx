@@ -34,6 +34,7 @@ export function TaskEditor({
   onClose,
   onSave,
   initial,
+  sample,
   userId,
   workspaceId,
   resourceId,
@@ -194,6 +195,16 @@ export function TaskEditor({
     );
     if (Object.keys(missing).length) form.setFieldsValue(missing);
   }, [open, members, initial, form, simple, compact]);
+  // 新项目引导的示例需求：创建态打开时预填可修改的内容字段（角色沿用默认值）。
+  useEffect(() => {
+    if (!open || initial || !sample) return;
+    form.setFieldsValue({
+      ...sample,
+      criteria: Array.isArray(sample.criteria)
+        ? sample.criteria.join('\n')
+        : sample.criteria,
+    });
+  }, [open, initial, sample, form]);
   return (
     <>
       <Modal
