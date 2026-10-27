@@ -14,7 +14,9 @@ const test = z.object({ record: text(100000), deployment: text() });
 const schemas: Record<Action, z.ZodType> = {
   START_WORK: z.object({}),
   SUBMIT_ACCEPTANCE: z.object({ summary: text(10000) }),
-  SUBMIT_REQUIREMENT: z.object({}),
+  SUBMIT_REQUIREMENT: z.object({
+    criteriaOverrideReason: z.string().trim().max(2000).optional().default(''),
+  }),
   RETURN_REQUIREMENT: reason,
   SUBMIT_SOLUTION: solution,
   APPROVE_SOLUTION: z.object({ reason: z.string().max(10000).optional() }),

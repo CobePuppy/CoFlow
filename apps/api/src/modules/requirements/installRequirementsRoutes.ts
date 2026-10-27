@@ -196,12 +196,30 @@ export function installRequirementsRoutes(router: express.Router) {
           });
           if (!submit) return created;
           const people = await members(p.id);
+          const adminFlag = (
+            await tx.workspaceMember.findUnique({
+              where: {
+                workspaceId_userId: {
+                  workspaceId: p.workspaceId,
+                  userId: r.user.id,
+                },
+              },
+            })
+          )?.role === 'ADMIN';
           const next = execute(
             asTask(created),
             'SUBMIT_REQUIREMENT',
-            {},
+            {
+              criteriaOverrideReason:
+                typeof r.body.criteriaOverrideReason === 'string'
+                  ? r.body.criteriaOverrideReason.trim().slice(0, 2000)
+                  : '',
+            },
             people.find((m) => m.id === r.user.id)!,
             people,
+            undefined,
+            adminFlag,
+            p.qualityGate === 'STRICT',
           );
           const saved = await tx.task.update({
             where: { id: created.id },

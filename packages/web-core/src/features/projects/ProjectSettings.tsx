@@ -78,6 +78,21 @@ export default function ProjectSettings({
             />
           </Form.Item>
         )}
+        <Form.Item
+          name="qualityGate"
+          label="验收标准检查"
+          tooltip="提交需求时对验收标准做四类质量检查（模糊词、多结果、无可观察结果、实现细节）及 BUG 类型完整性检查。提醒模式仅提醒并留痕；严格模式拒绝提交，团队管理员可填写不少于 10 字的理由强制放行并记录。"
+        >
+          <Radio.Group
+            options={[
+              { value: 'REMIND', label: '提醒模式 · 默认，提醒不阻断提交' },
+              {
+                value: 'STRICT',
+                label: '严格模式 · 有提醒时拒绝提交，管理员可强制放行',
+              },
+            ]}
+          />
+        </Form.Item>
         <Form
           form={form}
           layout="vertical"

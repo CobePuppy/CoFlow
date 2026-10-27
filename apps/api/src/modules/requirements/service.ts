@@ -212,6 +212,7 @@ const actionHandler = wrap(async (r, s) => {
           },
         })
       )?.role === 'ADMIN',
+      p.qualityGate === 'STRICT',
     );
     const update = await tx.task.updateMany({
       where: { id: t.id, version: input.expectedVersion },

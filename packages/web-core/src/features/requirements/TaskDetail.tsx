@@ -563,6 +563,19 @@ export function TaskDetail({ id, user, onClose }: any) {
                                   {h.payload.reason && (
                                     <p>{h.payload.reason}</p>
                                   )}
+                                  {h.action ===
+                                    'CRITERIA_WARNINGS_IGNORED' && (
+                                    <p className="muted">
+                                      提交时忽略 {h.payload.warnings?.length || 0}{' '}
+                                      条验收标准质量提醒
+                                      {h.payload.strict
+                                        ? '（严格模式'
+                                        : '（提醒模式'}
+                                      {h.payload.overrideReason
+                                        ? ` · 管理员放行：${h.payload.overrideReason}）`
+                                        : '）'}
+                                    </p>
+                                  )}
                                 </>
                               ),
                             }))}

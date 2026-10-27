@@ -161,6 +161,7 @@ model Project {
   sequence Int @default(0)
   workflow String @default("STANDARD")
   roleMode String @default("STANDARD")
+  qualityGate String @default("REMIND")
   @@index([workspaceId])
 }
 model ProjectMember {

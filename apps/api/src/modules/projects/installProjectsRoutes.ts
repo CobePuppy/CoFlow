@@ -78,6 +78,10 @@ export function installProjectsRoutes(router: express.Router) {
         typeof r.body.roleMode === 'string'
           ? z.enum(['STANDARD', 'COMPACT']).parse(r.body.roleMode)
           : undefined;
+      const qualityGate =
+        typeof r.body.qualityGate === 'string'
+          ? z.enum(['REMIND', 'STRICT']).parse(r.body.qualityGate)
+          : undefined;
       if (roleMode && roleMode !== p.roleMode) {
         assert(p.workflow === 'STANDARD', '简易流程项目不区分角色模式', 409);
         if (roleMode === 'COMPACT') {
@@ -104,6 +108,7 @@ export function installProjectsRoutes(router: express.Router) {
                   }
                 : {}),
               ...(roleMode ? { roleMode } : {}),
+              ...(qualityGate ? { qualityGate } : {}),
               ...(typeof r.body.archived === 'boolean'
                 ? { archivedAt: r.body.archived ? new Date() : null }
                 : {}),
