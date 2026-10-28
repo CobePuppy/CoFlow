@@ -15,6 +15,10 @@ import {
 import { ProjectRepository } from '../project-space/ProjectRepository.js';
 import { RequirementPreview } from '../project-space/RequirementPreview.js';
 import { ProjectHeader } from '../project-space/ProjectHeader.js';
+import {
+  FirstLoopGuide,
+  SAMPLE_REQUIREMENT,
+} from '../project-space/FirstLoopGuide.js';
 import '../project-space/project-space.css';
 
 import { SavedViews } from './components/SavedViews.js';
@@ -105,6 +109,7 @@ export default function Workspace({ user }: { user: any }) {
   const [settingsProject, setSettingsProject] = useState<any>();
   const [create, setCreate] = useState(false),
     [manage, setManage] = useState('');
+  const [sample, setSample] = useState<any>(null);
   const [searchText, setSearchText] = useState(filters.q || '');
   const [mobileNav, setMobileNav] = useState(false);
   const [mobileCards, setMobileCards] = useState(
@@ -225,6 +230,11 @@ export default function Workspace({ user }: { user: any }) {
     ['metrics', p],
     `/projects/${p}/metrics`,
     !!p && isProjectView,
+  );
+  const firstLoop = useData(
+    ['first-loop', p],
+    `/projects/${p}/task-summaries?scope=all&sort=updated&pageSize=100`,
+    !!p && view === 'project-overview',
   );
   async function mutate(url: string, method: string, body: any) {
     try {
@@ -529,17 +539,32 @@ export default function Workspace({ user }: { user: any }) {
           ) : (
             <>
               {view === 'project-overview' ? (
-                <ProjectOverview
-                  project={project}
-                  onOpen={open}
-                  user={user}
-                  query={stats}
-                  onTasks={(scope = 'all') =>
-                    navigate({ view: 'tasks', scope, page: null }, true)
-                  }
-                  onIterations={() => projectNavigate('iterations')}
-                  onDocuments={() => projectNavigate('documents')}
-                />
+                <>
+                  <FirstLoopGuide
+                    project={project}
+                    user={user}
+                    members={people.data || []}
+                    firstLoop={firstLoop}
+                    isAdmin={isAdmin}
+                    onOpenTask={open}
+                    onManageMembers={() => setManage('members')}
+                    onSample={() => {
+                      setSample({ ...SAMPLE_REQUIREMENT });
+                      setCreate(true);
+                    }}
+                  />
+                  <ProjectOverview
+                    project={project}
+                    onOpen={open}
+                    user={user}
+                    query={stats}
+                    onTasks={(scope = 'all') =>
+                      navigate({ view: 'tasks', scope, page: null }, true)
+                    }
+                    onIterations={() => projectNavigate('iterations')}
+                    onDocuments={() => projectNavigate('documents')}
+                  />
+                </>
               ) : view === 'github' ? (
                 project ? (
                   <ProjectRepository
@@ -1182,13 +1207,18 @@ export default function Workspace({ user }: { user: any }) {
         members={people.data || []}
         projectId={p}
         projectName={project?.name}
-        onClose={() => setCreate(false)}
+        sample={sample}
+        onClose={() => {
+          setCreate(false);
+          setSample(null);
+        }}
         onSave={async (v: any) => {
           const created = await mutate(
             `/projects/${v.projectId || p}/tasks`,
             'POST',
             v,
           );
+          setSample(null);
           flushSync(() => setCreate(false));
           requestAnimationFrame(() =>
             navigate(

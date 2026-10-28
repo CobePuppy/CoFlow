@@ -5,6 +5,7 @@ export function requirementReadiness(task: Task, memberIds?: string[]) {
   const content: string[] = [];
   const assignment: string[] = [];
   const simple = d.workflow === 'SIMPLE';
+  const compact = !simple && d.roleMode === 'COMPACT';
   for (const [key, label] of [
     ['title', '需求标题'],
     ['background', '背景'],
@@ -20,27 +21,24 @@ export function requirementReadiness(task: Task, memberIds?: string[]) {
     issues.push({ field: 'criteria', message: '至少一项可验证的验收标准' });
   }
   for (const [key, label] of [
-    ['productId', '产品负责人'],
-    ['engineerId', '研发负责人'],
-    ['testerId', '测试负责人'],
+    ['productId', compact ? '需求负责人' : '产品负责人'],
+    ['engineerId', compact ? '执行人' : '研发负责人'],
+    ['testerId', compact ? '验收人' : '测试负责人'],
     ['productReviewerId', '产品评估人'],
     ['qaReviewerId', '测试评估人'],
   ] as const)
     if (
       (!simple || ['productId', 'engineerId'].includes(key)) &&
+      (!compact || key !== 'productReviewerId') &&
+      (!compact || key !== 'qaReviewerId') &&
       (!d[key] || (memberIds && !memberIds.includes(d[key])))
     ) {
       issues.push({ field: key, message: label + '需指定项目成员' });
-      assignment.push(
-        (simple && key === 'engineerId'
-          ? '执行人'
-          : simple && key === 'productId'
-            ? '需求负责人'
-            : label) + '需指定项目成员',
-      );
+      assignment.push(label + '需指定项目成员');
     }
   if (
     !simple &&
+    !compact &&
     d.productReviewerId &&
     d.productReviewerId === d.qaReviewerId
   ) {
@@ -53,12 +51,26 @@ export function requirementReadiness(task: Task, memberIds?: string[]) {
   if (
     !simple &&
     d.engineerId &&
-    (d.engineerId === d.productReviewerId || d.engineerId === d.qaReviewerId)
+    ((compact && d.engineerId === d.productId) ||
+      d.engineerId === d.productReviewerId ||
+      d.engineerId === d.qaReviewerId)
   ) {
-    assignment.push('研发负责人不能评估自己的方案');
+    assignment.push('执行人不能评估自己的方案');
     issues.push({
       field: 'engineerId',
-      message: '研发负责人不能评估自己的方案',
+      message: '执行人不能评估自己的方案',
+    });
+  }
+  if (
+    !simple &&
+    d.testerId &&
+    ((compact && d.testerId === d.productId) ||
+      (!compact && d.testerId === d.qaReviewerId))
+  ) {
+    assignment.push('测试负责人不能评估自己的测试结果');
+    issues.push({
+      field: 'testerId',
+      message: '测试负责人不能评估自己的测试结果',
     });
   }
   const blocked = task.data.blocks.some((b) => !b.end);

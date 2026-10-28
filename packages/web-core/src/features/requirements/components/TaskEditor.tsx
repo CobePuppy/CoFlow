@@ -1,7 +1,7 @@
 import { useBrowserDraft } from '../../../shared/lib/useBrowserDraft.js';
 import { DraftRecovery } from '../../../shared/ui/DraftRecovery.js';
 import { FileImport } from '../../../app/pages.js';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { requirementReadiness } from '../model/transition-readiness.js';
 import {
   Alert,
@@ -10,12 +10,14 @@ import {
   Form,
   Input,
   Modal,
+  Popconfirm,
   Select,
   Space,
   Checkbox,
 } from 'antd';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { api } from '../../../shared/api/runtime.js';
+import { api, useData } from '../../../shared/api/runtime.js';
+import { reviewCriteria } from '@coflow/contracts/criteria-review.js';
 import {
   templateContent,
   templateFormValues,
@@ -26,6 +28,9 @@ import type { Member } from '@coflow/contracts/index.js';
 import './requirements.css';
 import { useUnsavedChanges } from '../../../shared/lib/unsaved.js';
 
+// 严格模式下管理员放行弹窗打开时静默中止保存，不向前端展示为错误。
+const SILENT_ABORT = Symbol('criteria-override');
+
 export function TaskEditor({
   open,
   members: originalMembers,
@@ -34,6 +39,7 @@ export function TaskEditor({
   onClose,
   onSave,
   initial,
+  sample,
   userId,
   workspaceId,
   resourceId,
@@ -128,6 +134,9 @@ export function TaskEditor({
   const currentProject =
     choices.data?.find((p: any) => p.id === projectId) || context.data;
   const simple = (initial?.workflow || currentProject?.workflow) === 'SIMPLE';
+  const compact =
+    !simple &&
+    (initial?.roleMode || currentProject?.roleMode) === 'COMPACT';
   const { modal, message } = App.useApp();
   const qc = useQueryClient();
   const templates = useQuery<TemplateList>({
@@ -163,6 +172,57 @@ export function TaskEditor({
   const [busy, setBusy] = useState(false);
   const [expanded, setExpanded] = useState(false);
   const [error, setError] = useState('');
+  // CF-003 验收标准质量检查：实时提醒 + 严格模式拦截 + AI 改写。
+  const criteriaText = Form.useWatch('criteria', form);
+  const descriptionText = Form.useWatch('description', form);
+  const strictProject = currentProject?.qualityGate === 'STRICT';
+  const settings = useData(['settings'], '/settings', !!open);
+  const workspacePeople = useData(
+    ['workspaceMembers', workspaceId],
+    `/workspaces/${workspaceId}/members`,
+    !!workspaceId,
+  );
+  const isAdmin =
+    workspacePeople.data?.some(
+      (m: any) => m.id === userId && m.role === 'ADMIN',
+    ) || false;
+  const aiReady = !!settings.data?.hasKey;
+  const criteriaLines = (criteriaText || '')
+    .split('\n')
+    .map((s: string) => s.trim())
+    .filter(Boolean);
+  const criteriaWarnings = useMemo(
+    () =>
+      criteriaLines.length
+        ? reviewCriteria(criteriaLines, {
+            type,
+            description: descriptionText,
+          })
+        : [],
+    [criteriaText, type, descriptionText],
+  );
+  const [overrideOpen, setOverrideOpen] = useState(false);
+  const [overrideText, setOverrideText] = useState('');
+  const [rewriting, setRewriting] = useState(false);
+  const rewriteCriteria = async () => {
+    setRewriting(true);
+    setError('');
+    try {
+      const result = await api('/ai/rewrite-criteria', 'POST', {
+        criteria: criteriaLines,
+        description: descriptionText || '',
+        type: type || 'REQUIREMENT',
+        consent: true,
+      });
+      form.setFieldsValue({ criteria: result.criteria.join('\n') });
+      persist();
+      message.success('已按 AI 建议改写验收标准，请核对');
+    } catch (e) {
+      setError((e as Error).message);
+    } finally {
+      setRewriting(false);
+    }
+  };
   const owner = (roles: string[]) =>
     (roles.includes('PRODUCT') &&
     members.some(
@@ -177,8 +237,12 @@ export function TaskEditor({
       productId: owner(['PRODUCT']),
       engineerId: owner(['ENGINEER']),
       testerId: owner(['QA', 'OPS']),
-      productReviewerId: owner(['PRODUCT']),
-      qaReviewerId: owner(['QA']),
+      ...(compact
+        ? {}
+        : {
+            productReviewerId: owner(['PRODUCT']),
+            qaReviewerId: owner(['QA']),
+          }),
     };
     const missing = Object.fromEntries(
       Object.entries(defaults).filter(
@@ -186,7 +250,17 @@ export function TaskEditor({
       ),
     );
     if (Object.keys(missing).length) form.setFieldsValue(missing);
-  }, [open, members, initial, form, simple]);
+  }, [open, members, initial, form, simple, compact]);
+  // 新项目引导的示例需求：创建态打开时预填可修改的内容字段（角色沿用默认值）。
+  useEffect(() => {
+    if (!open || initial || !sample) return;
+    form.setFieldsValue({
+      ...sample,
+      criteria: Array.isArray(sample.criteria)
+        ? sample.criteria.join('\n')
+        : sample.criteria,
+    });
+  }, [open, initial, sample, form]);
   return (
     <>
       <Modal
@@ -349,6 +423,7 @@ export function TaskEditor({
                       ...values,
                       criteria,
                       workflow: simple ? 'SIMPLE' : 'STANDARD',
+                      roleMode: compact ? 'COMPACT' : 'STANDARD',
                       blocks: [],
                     },
                   } as any,
@@ -364,6 +439,23 @@ export function TaskEditor({
                       ),
                   );
                 }
+                // CF-003 严格模式：存在质量提醒时拒绝提交，管理员可填理由放行。
+                if (criteriaWarnings.length && strictProject) {
+                  if (!isAdmin) {
+                    locate('criteria');
+                    throw new Error(
+                      '项目为严格模式：请先按质量提醒修改验收标准，或联系团队管理员强制放行',
+                    );
+                  }
+                  if (
+                    String(values.criteriaOverrideReason || '').trim().length <
+                    10
+                  ) {
+                    setOverrideText('');
+                    setOverrideOpen(true);
+                    throw SILENT_ABORT;
+                  }
+                }
               }
               await onSave({
                 ...rest,
@@ -375,7 +467,13 @@ export function TaskEditor({
                     'testerId',
                     'productReviewerId',
                     'qaReviewerId',
-                  ].map((key) => [key, values[key] || '']),
+                  ].map((key) => [
+                    key,
+                    compact &&
+                    (key === 'productReviewerId' || key === 'qaReviewerId')
+                      ? ''
+                      : values[key] || '',
+                  ]),
                 ),
                 projectId,
                 criteria: (values.criteria || '')
@@ -388,7 +486,7 @@ export function TaskEditor({
               browserDraft.clear();
               setDirty(false);
             } catch (e) {
-              setError((e as Error).message);
+              if (e !== SILENT_ABORT) setError((e as Error).message);
             } finally {
               setBusy(false);
             }
@@ -577,50 +675,73 @@ export function TaskEditor({
               <p>
                 {simple
                   ? '只需指定需求负责人和执行人，可以由同一人承担。'
-                  : '可分配阶段职责；方案需两位独立评估人确认。'}
+                  : compact
+                    ? '紧凑模式：只需指定需求负责人、执行人与验收人，方案评估默认由需求负责人兼任。'
+                    : '可分配阶段职责；方案需两位独立评估人确认。'}
               </p>
             </header>
+            {compact && (
+              <Alert
+                type="info"
+                showIcon
+                style={{ marginBottom: 12 }}
+                message="紧凑模式：产品评估人与测试评估人默认由需求负责人兼任（同一人兼任两项评估）"
+              />
+            )}
             <div className="requirement-owner-grid">
               {[
-                ['productId', '产品负责人', 'PRODUCT'],
-                ['engineerId', '研发负责人', 'ENGINEER'],
-                ['testerId', '测试负责人', 'QA,OPS'],
-                ['productReviewerId', '产品评估人', 'PRODUCT'],
-                ['qaReviewerId', '测试评估人', 'QA'],
-              ].map(([key, label]) => (
-                <Form.Item
-                  key={key}
-                  name={key}
-                  label={
-                    simple && key === 'engineerId'
-                      ? '执行人'
-                      : simple && key === 'productId'
+                ['productId', '产品负责人'],
+                ['engineerId', '研发负责人'],
+                ['testerId', '测试负责人'],
+                ['productReviewerId', '产品评估人'],
+                ['qaReviewerId', '测试评估人'],
+              ]
+                .map(([key, base]) => [
+                  key as string,
+                  (simple && key === 'engineerId'
+                    ? '执行人'
+                    : simple && key === 'productId'
+                      ? '需求负责人'
+                      : compact && key === 'productId'
                         ? '需求负责人'
-                        : label
-                  }
-                  hidden={
-                    simple
-                      ? !['productId', 'engineerId'].includes(key)
-                      : key !== 'productId' && !expanded
-                  }
-                  rules={[
-                    {
-                      required: false,
-                      message: `请选择${label}`,
-                    },
-                  ]}
-                >
-                  <Select
-                    showSearch
-                    optionFilterProp="label"
-                    placeholder={`选择${label}`}
-                    options={members.map((m: Member) => ({
-                      value: m.id,
-                      label: m.name,
-                    }))}
-                  />
-                </Form.Item>
-              ))}
+                        : compact && key === 'engineerId'
+                          ? '执行人'
+                          : compact && key === 'testerId'
+                            ? '验收人'
+                            : base) as string,
+                ])
+                .map(([key, label]) => (
+                  <Form.Item
+                    key={key}
+                    name={key}
+                    label={label}
+                    hidden={
+                      simple
+                        ? !['productId', 'engineerId'].includes(key)
+                        : compact
+                          ? !['productId', 'engineerId', 'testerId'].includes(
+                              key,
+                            )
+                          : key !== 'productId' && !expanded
+                    }
+                    rules={[
+                      {
+                        required: false,
+                        message: `请选择${label}`,
+                      },
+                    ]}
+                  >
+                    <Select
+                      showSearch
+                      optionFilterProp="label"
+                      placeholder={`选择${label}`}
+                      options={members.map((m: Member) => ({
+                        value: m.id,
+                        label: m.name,
+                      }))}
+                    />
+                  </Form.Item>
+                ))}
             </div>
           </section>
           <section
@@ -652,6 +773,49 @@ export function TaskEditor({
                 placeholder="写下可验证的完成标准，每行一项"
               />
             </Form.Item>
+            <Form.Item name="criteriaOverrideReason" hidden>
+              <Input />
+            </Form.Item>
+            {criteriaWarnings.length > 0 && (
+              <div className="criteria-warnings" role="alert">
+                <div className="criteria-warnings-head">
+                  <span>
+                    验收标准质量提醒 · {criteriaWarnings.length} 条
+                    <span className="criteria-warnings-note">
+                      （点击提醒定位到验收标准；
+                      {strictProject
+                        ? '严格模式：提交将被拒绝，团队管理员可填理由强制放行'
+                        : '提醒不阻断提交，忽略会记录到时间线'}
+                      ）
+                    </span>
+                  </span>
+                  {aiReady && (
+                    <Popconfirm
+                      title="发送至 DeepSeek 改写"
+                      description="将当前验收标准与需求说明发送至 DeepSeek（使用个人 Key，可能产生费用），改写结果会先填入表单供核对。"
+                      okText="同意并改写"
+                      cancelText="取消"
+                      onConfirm={rewriteCriteria}
+                      disabled={rewriting}
+                    >
+                      <Button size="small" loading={rewriting}>
+                        帮我改写
+                      </Button>
+                    </Popconfirm>
+                  )}
+                </div>
+                {criteriaWarnings.map((w, i) => (
+                  <button
+                    key={i}
+                    type="button"
+                    className="criteria-warning"
+                    onClick={() => locate('criteria')}
+                  >
+                    {w.message}
+                  </button>
+                ))}
+              </div>
+            )}
           </section>
         </Form>
       </Modal>
@@ -703,6 +867,32 @@ export function TaskEditor({
             ))}
           </Space>
         </Checkbox.Group>
+      </Modal>
+      <Modal
+        open={overrideOpen}
+        title="严格模式：管理员强制放行"
+        okText="强制放行并提交"
+        okButtonProps={{ disabled: overrideText.trim().length < 10 }}
+        onCancel={() => setOverrideOpen(false)}
+        onOk={() => {
+          form.setFieldsValue({
+            criteriaOverrideReason: overrideText.trim(),
+          });
+          setOverrideOpen(false);
+          submitIntent.current = true;
+          form.submit();
+        }}
+      >
+        <p className="muted">
+          当前存在 {criteriaWarnings.length} 条验收标准质量提醒。填写不少于
+          10 字的放行理由后继续提交；理由与提醒将记录到需求时间线。
+        </p>
+        <Input.TextArea
+          rows={3}
+          value={overrideText}
+          onChange={(e) => setOverrideText(e.target.value)}
+          placeholder="说明为何在存在提醒的情况下仍然放行（不少于 10 字）"
+        />
       </Modal>
       {snapshot && (
         <Modal

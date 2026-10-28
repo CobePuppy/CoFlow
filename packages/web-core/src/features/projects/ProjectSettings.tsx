@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Alert, Button, Form, Input, Modal, Space, App } from 'antd';
+import { Alert, Button, Form, Input, Modal, Radio, Space, App } from 'antd';
 import { useQueryClient } from '@tanstack/react-query';
 import { api, useData } from '../../shared/api/runtime.js';
 import { Management, FileImport } from '../../app/pages.js';
@@ -61,6 +61,38 @@ export default function ProjectSettings({
             : '标准流程 · 包含独立评估和测试'}
           。现有需求沿用创建时的流程。
         </p>
+        {project.workflow === 'STANDARD' && (
+          <Form.Item
+            name="roleMode"
+            label="角色模式"
+            tooltip="紧凑模式适用于 3-5 人小团队：需求只需指定需求负责人、执行人与验收人，产品评估与测试评估默认由需求负责人兼任；切换模式不影响已有需求。"
+          >
+            <Radio.Group
+              options={[
+                { value: 'STANDARD', label: '标准模式 · 五个角色独立指定' },
+                {
+                  value: 'COMPACT',
+                  label: '紧凑模式 · 三个角色，评估由需求负责人兼任',
+                },
+              ]}
+            />
+          </Form.Item>
+        )}
+        <Form.Item
+          name="qualityGate"
+          label="验收标准检查"
+          tooltip="提交需求时对验收标准做四类质量检查（模糊词、多结果、无可观察结果、实现细节）及 BUG 类型完整性检查。提醒模式仅提醒并留痕；严格模式拒绝提交，团队管理员可填写不少于 10 字的理由强制放行并记录。"
+        >
+          <Radio.Group
+            options={[
+              { value: 'REMIND', label: '提醒模式 · 默认，提醒不阻断提交' },
+              {
+                value: 'STRICT',
+                label: '严格模式 · 有提醒时拒绝提交，管理员可强制放行',
+              },
+            ]}
+          />
+        </Form.Item>
         <Form
           form={form}
           layout="vertical"

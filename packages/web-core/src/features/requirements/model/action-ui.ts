@@ -21,8 +21,15 @@ export const actionLabels: Record<string, string> = {
   UNBLOCK: '解除阻塞',
   TRANSFER: '责任转交',
   UPDATE_PROPERTIES: '更新基本信息',
+  CRITERIA_WARNINGS_IGNORED: '验收标准提醒已忽略',
 };
 export const actionFields: Record<string, [string, string, string?][]> = {
+  SUBMIT_REQUIREMENT: [
+    [
+      'criteriaOverrideReason',
+      '强制放行理由（仅严格模式且存在质量提醒时需要；团队管理员填写，不少于 10 字）',
+    ],
+  ],
   SUBMIT_ACCEPTANCE: [['summary', '完成说明']],
   SUBMIT_SOLUTION: [
     ['body', '方案正文'],

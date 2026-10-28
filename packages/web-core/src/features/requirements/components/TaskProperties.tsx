@@ -364,10 +364,20 @@ export function TaskProperties({
               ? field === 'engineerId'
                 ? '执行人'
                 : '需求负责人'
-              : originalLabel;
+              : d.roleMode === 'COMPACT' && field === 'productId'
+                ? '需求负责人'
+                : d.roleMode === 'COMPACT' && field === 'engineerId'
+                  ? '执行人'
+                  : d.roleMode === 'COMPACT' && field === 'testerId'
+                    ? '验收人'
+                    : originalLabel;
           const current = (d as any)[field];
           const reviewer =
             field === 'productReviewerId' || field === 'qaReviewerId';
+          const compactShared =
+            d.roleMode === 'COMPACT' &&
+            reviewer &&
+            d.productReviewerId === d.qaReviewerId;
           const editable =
             t.allowedActions.includes('TRANSFER') &&
             !(reviewer && t.status === 'SOLUTION_REVIEW');
@@ -381,6 +391,15 @@ export function TaskProperties({
                   <span className="property-person">
                     <Avatar size={22}>{person(current)[0]}</Avatar>
                     {person(current)}
+                    {compactShared && (
+                      <Tag
+                        color={edition.primary}
+                        style={{ marginLeft: 8 }}
+                        title="紧凑模式：产品评估人与测试评估人由同一人兼任"
+                      >
+                        同一人兼任两项评估
+                      </Tag>
+                    )}
                   </span>,
                   <Select
                     getPopupContainer={(trigger) => trigger.parentElement!}

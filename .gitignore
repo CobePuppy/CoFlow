@@ -2,6 +2,8 @@ node_modules/
 dist/
 .env
 storage/
+# 上传数据的 storage 目录需忽略，但源码目录 infrastructure/storage 必须入库
+!apps/api/src/infrastructure/storage/
 playwright-report/
 test-results/
 .local-pg/

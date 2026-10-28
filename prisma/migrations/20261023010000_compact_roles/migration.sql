@@ -1,0 +1,2 @@
+ALTER TABLE "Project" ADD COLUMN "roleMode" TEXT NOT NULL DEFAULT 'STANDARD';
+ALTER TABLE "Project" ADD CONSTRAINT "Project_roleMode_check" CHECK ("roleMode" IN ('STANDARD','COMPACT'));

@@ -1025,3 +1025,42 @@
     padding: 16px;
   }
 }
+
+/* 验收标准质量提醒（CF-003） */
+.criteria-warnings {
+  margin: -8px 0 16px;
+  padding: 10px 12px;
+  border: 1px solid #f0d18a;
+  background: #fdf9ee;
+  border-radius: 8px;
+  display: grid;
+  gap: 4px;
+}
+.criteria-warnings-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+  font-weight: 500;
+  color: #8a6116;
+}
+.criteria-warnings-note {
+  font-weight: 400;
+  font-size: 12px;
+  color: #a18048;
+}
+.criteria-warning {
+  text-align: left;
+  border: none;
+  background: none;
+  padding: 2px 0;
+  color: #8a6116;
+  cursor: pointer;
+  font-size: 13px;
+  text-decoration: underline dotted;
+  overflow-wrap: anywhere;
+}
+.criteria-warning:hover {
+  color: #6d4c0e;
+}

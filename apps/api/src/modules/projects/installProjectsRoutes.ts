@@ -74,6 +74,23 @@ export function installProjectsRoutes(router: express.Router) {
     wrap(async (r, s) => {
       const p = await project(r, String(r.params.id), false, true);
       await workspace(r, p.workspaceId, true);
+      const roleMode =
+        typeof r.body.roleMode === 'string'
+          ? z.enum(['STANDARD', 'COMPACT']).parse(r.body.roleMode)
+          : undefined;
+      const qualityGate =
+        typeof r.body.qualityGate === 'string'
+          ? z.enum(['REMIND', 'STRICT']).parse(r.body.qualityGate)
+          : undefined;
+      if (roleMode && roleMode !== p.roleMode) {
+        assert(p.workflow === 'STANDARD', '简易流程项目不区分角色模式', 409);
+        if (roleMode === 'COMPACT') {
+          const count = await db.projectMember.count({
+            where: { projectId: p.id },
+          });
+          assert(count >= 3, '紧凑模式至少需要 3 名项目成员', 409);
+        }
+      }
       s.json(
         await db.$transaction(async (tx) => {
           const result = await tx.project.update({
@@ -90,6 +107,8 @@ export function installProjectsRoutes(router: express.Router) {
                       .parse(r.body.description),
                   }
                 : {}),
+              ...(roleMode ? { roleMode } : {}),
+              ...(qualityGate ? { qualityGate } : {}),
               ...(typeof r.body.archived === 'boolean'
                 ? { archivedAt: r.body.archived ? new Date() : null }
                 : {}),

@@ -10,6 +10,7 @@ const members: Member[] = [
   { id: 'p', name: '产品', email: 'p@test.local', roles: ['PRODUCT'] },
   { id: 'e', name: '研发', email: 'e@test.local', roles: ['ENGINEER'] },
   { id: 'q', name: '测试', email: 'q@test.local', roles: ['QA'] },
+  { id: 'r', name: '测试评估', email: 'r@test.local', roles: ['QA'] },
 ];
 export function fixture(): Task {
   return {
@@ -31,7 +32,7 @@ export function fixture(): Task {
       productId: 'p',
       engineerId: 'e',
       productReviewerId: 'p',
-      qaReviewerId: 'q',
+      qaReviewerId: 'r',
       testerId: 'q',
       requirementVersion: 0,
       requirements: [],
@@ -116,7 +117,7 @@ test('完整闭环、两个评估槽位与不可变原始值', () => {
   f.act('APPROVE_SOLUTION');
   assert.equal(f.task.status, 'SOLUTION_REVIEW');
   assert.throws(() => f.act('START_DEVELOPMENT', {}, 1));
-  f.act('APPROVE_SOLUTION', {}, 2);
+  f.act('APPROVE_SOLUTION', {}, 3);
   assert.equal(f.task.status, 'READY_FOR_DEV');
   f.act('START_DEVELOPMENT', {}, 1);
   f.act('COMPLETE_DEVELOPMENT', dev, 1);
@@ -131,20 +132,81 @@ test('职责分离与非指定审批拒绝', () => {
   const f = flow();
   f.task.data.qaReviewerId = 'p';
   assert.throws(() => f.act('SUBMIT_REQUIREMENT'));
-  f.task.data.qaReviewerId = 'q';
+  f.task.data.qaReviewerId = 'r';
+  f.task.data.testerId = 'r';
+  assert.throws(() => f.act('SUBMIT_REQUIREMENT'));
+  f.task.data.testerId = 'q';
   f.act('SUBMIT_REQUIREMENT');
   f.act('SUBMIT_SOLUTION', solution, 1);
   assert.throws(() => f.act('APPROVE_SOLUTION', {}, 1));
+});
+test('紧凑模式三角色闭环，评估人默认由需求负责人兼任', () => {
+  const f = flow();
+  f.task.data.roleMode = 'COMPACT';
+  f.task.data.productReviewerId = '';
+  f.task.data.qaReviewerId = '';
+  f.act('SUBMIT_REQUIREMENT');
+  assert.equal(f.task.data.productReviewerId, 'p');
+  assert.equal(f.task.data.qaReviewerId, 'p');
+  f.act('SUBMIT_SOLUTION', solution, 1);
+  f.act('APPROVE_SOLUTION');
+  assert.equal(f.task.status, 'READY_FOR_DEV');
+  assert.equal(
+    f.task.data.reviews.filter((r: any) => r.round === 1).length,
+    2,
+  );
+  assert.equal(f.task.data.reviewSnapshot.decisions.length, 2);
+  f.act('START_DEVELOPMENT', {}, 1);
+  f.act('COMPLETE_DEVELOPMENT', dev, 1);
+  f.act('START_TEST', { environment: 'local' }, 2);
+  f.act('PASS_TEST', { record: '通过', deployment: '通过' }, 2);
+  f.act('ACCEPT', { checks: [true] });
+  assert.equal(f.task.status, 'CLOSED');
+});
+test('紧凑模式退回一次写入双槽并守住兼任红线', () => {
+  const f = flow();
+  f.task.data.roleMode = 'COMPACT';
+  f.task.data.productReviewerId = '';
+  f.task.data.qaReviewerId = '';
+  f.act('SUBMIT_REQUIREMENT');
+  f.act('SUBMIT_SOLUTION', solution, 1);
+  f.act('REJECT_SOLUTION', { reason: '补充风险' });
+  assert.equal(f.task.status, 'SOLUTION_PENDING');
+  assert.equal(
+    f.task.data.reviews.filter((r: any) => r.round === 1).length,
+    2,
+  );
+  assert(
+    !f.task.data.reviews.some((r: any) => r.approved && r.round === 1),
+  );
+  const g = flow();
+  g.task.data.roleMode = 'COMPACT';
+  g.task.data.productReviewerId = '';
+  g.task.data.qaReviewerId = '';
+  g.task.data.testerId = 'p';
+  assert.throws(
+    () => g.act('SUBMIT_REQUIREMENT'),
+    /测试负责人不能评估自己的测试结果/,
+  );
+  const h = flow();
+  h.task.data.roleMode = 'COMPACT';
+  h.task.data.productReviewerId = '';
+  h.task.data.qaReviewerId = '';
+  h.task.data.engineerId = 'p';
+  assert.throws(
+    () => h.act('SUBMIT_REQUIREMENT'),
+    /执行人不能评估自己的方案/,
+  );
 });
 test('方案退回后两个槽位重新审批', () => {
   const f = flow();
   f.act('SUBMIT_REQUIREMENT');
   f.act('SUBMIT_SOLUTION', solution, 1);
   f.act('APPROVE_SOLUTION');
-  assert.throws(() => f.act('REJECT_SOLUTION', {}, 2));
-  f.act('REJECT_SOLUTION', { reason: '补充风险' }, 2);
+  assert.throws(() => f.act('REJECT_SOLUTION', {}, 3));
+  f.act('REJECT_SOLUTION', { reason: '补充风险' }, 3);
   f.act('SUBMIT_SOLUTION', solution, 1);
-  f.act('APPROVE_SOLUTION', {}, 2);
+  f.act('APPROVE_SOLUTION', {}, 3);
   assert.equal(f.task.status, 'SOLUTION_REVIEW');
   f.act('APPROVE_SOLUTION');
   assert.equal(f.task.data.reviewSnapshot.solutionVersion, 2);
@@ -154,7 +216,7 @@ test('测试退回保留结论并生成新轮次；变更废止旧评估', () =>
   f.act('SUBMIT_REQUIREMENT');
   f.act('SUBMIT_SOLUTION', solution, 1);
   f.act('APPROVE_SOLUTION');
-  f.act('APPROVE_SOLUTION', {}, 2);
+  f.act('APPROVE_SOLUTION', {}, 3);
   f.act('START_DEVELOPMENT', {}, 1);
   f.act('COMPLETE_DEVELOPMENT', dev, 1);
   f.act('START_TEST', { environment: 'local' }, 2);
@@ -200,7 +262,7 @@ test('验收退回待测试必须新轮次', () => {
   f.act('SUBMIT_REQUIREMENT');
   f.act('SUBMIT_SOLUTION', solution, 1);
   f.act('APPROVE_SOLUTION');
-  f.act('APPROVE_SOLUTION', {}, 2);
+  f.act('APPROVE_SOLUTION', {}, 3);
   f.act('START_DEVELOPMENT', {}, 1);
   f.act('COMPLETE_DEVELOPMENT', dev, 1);
   f.act('START_TEST', { environment: 'local' }, 2);
